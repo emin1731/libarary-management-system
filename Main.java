@@ -1,7 +1,7 @@
-import components.Table;
+import components.TableView;
 
 public class Main {
     public static void main(String[] args) {
-        new Table();
+        new TableView();
     }
 }

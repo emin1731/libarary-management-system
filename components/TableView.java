@@ -2,21 +2,21 @@ package components;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.JFrame;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
+// import javax.swing.ListSelectionModel;
+// import java.awt.BorderLayout;
+// import java.awt.Color;
+// import java.awt.Container;
+// import javax.swing.filechooser.FileSystemView;
+// import javax.swing.table.TableColumn;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import javax.swing.filechooser.FileSystemView;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-public class Table extends JFrame {
+public class TableView extends JFrame {
     JScrollPane scrollPane;
     JTable table;
     String[] columns;
@@ -24,7 +24,7 @@ public class Table extends JFrame {
 
  
     
-    public Table() { 
+    public TableView() { 
         columns = new String[]{"Title", "Author"};
         data = getData("C:\\Users\\emin0\\Desktop\\team-project-team-54\\data\\brodsky.csv");
         table = new JTable(data, columns);
