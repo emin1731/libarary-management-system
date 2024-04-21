@@ -1,6 +1,8 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import exceptions.InvalidRatingException;
+
 enum Status{
     NOT_STARTED,
     ONGOING,
@@ -23,6 +25,15 @@ public class ProfileBook extends Book{
         this.endDate = endDate;
         this.rating = rating;
         this.review = review;
+    }
+    public ProfileBook(Book book) {
+        super(book.id, book.title, book.author, book.ratings, book.reviews);
+        this.status = Status.NOT_STARTED;
+        this.timeSpent = 0;
+        this.startDate = LocalDate.now();
+        this.endDate = null;
+        this.rating = 0;
+        this.review = " ";
     }
 
     public ProfileBook(String id, String title, String author, ArrayList<Integer> ratings, ArrayList<Review> reviews,
@@ -61,8 +72,13 @@ public class ProfileBook extends Book{
         this.endDate = endDate;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setRating(Integer rating) throws InvalidRatingException{
+        if (rating >= 0 && rating <= 5) {
+            this.rating = rating;
+        }
+        else {
+            throw new InvalidRatingException("Error in class: " + this.getClass() + ", Rating should be from 0 to 5");
+        }
     }
 
     public void setReview(String review) {
