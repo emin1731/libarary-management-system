@@ -45,6 +45,7 @@ public class Sorting extends JFrame implements ActionListener {
                 if (column == 3 && row < table.getRowCount()) {
                     System.out.println("Clicked on: " + table.getValueAt(row, column) + " -> " + row + " " + column);
                     System.out.println(GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row).getTitle());
+                    openNewWindow(GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row).getTitle());
                     
                 }
             }
@@ -92,6 +93,18 @@ public class Sorting extends JFrame implements ActionListener {
         setSize(400, 300);
         setLocationRelativeTo(null);
     }
+    public static void openNewWindow(String labelText) {
+        JFrame frame = new JFrame("New Window");
+        frame.setSize(500, 700);
+        JLabel label = new JLabel(labelText);
+        frame.getContentPane().add(label);
+        
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window, not the entire application
+        frame.pack();
+        frame.setLocationRelativeTo(null); // Center the window on the screen
+        frame.setVisible(true);
+    }
+
 
     public Object[][] toObjectArray(ArrayList<Book> books) {
         Object[][] result = new Object[books.size()][4];
