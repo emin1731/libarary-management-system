@@ -7,11 +7,11 @@ import java.util.ArrayList;
  * Book
  */
 public class Book implements Serializable, Cloneable{
-    String id;
-    String title;
-    String author;
-    ArrayList<Integer> ratings;
-    ArrayList<Review> reviews;
+    private String id;
+    private String title;
+    private String author;
+    private ArrayList<Integer> ratings;
+    private ArrayList<Review> reviews;
 
     public Book(String id, String title, String author, ArrayList<Integer> ratings, ArrayList<Review> reviews) {
         this.id = id;
@@ -20,7 +20,27 @@ public class Book implements Serializable, Cloneable{
         this.ratings = ratings;
         this.reviews = reviews;
     }
-    
+    public double getAverageRating() {
+        if (this.ratings.isEmpty()) {
+            return -1.0;
+        }
+        double sum = 0;
+        for (Integer integer : this.ratings) {
+            sum += integer;
+        }
+        return (Double) sum / this.ratings.size();
+    }
+    public String getReviewsUsersString() {
+        if (reviews.isEmpty()) {
+            return "No Reviews";
+        }
+        String res = "";
+        for (Review review : reviews) {
+            res += review + " ";
+        }
+        return res;
+    }
+
     
 
 
