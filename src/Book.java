@@ -7,11 +7,11 @@ import java.util.ArrayList;
  * Book
  */
 public class Book implements Serializable, Cloneable{
-    private String id;
-    private String title;
-    private String author;
-    private ArrayList<Integer> ratings;
-    private ArrayList<Review> reviews;
+    protected String id;
+    protected String title;
+    protected String author;
+    protected ArrayList<Integer> ratings;
+    protected ArrayList<Review> reviews;
 
     public Book(String id, String title, String author, ArrayList<Integer> ratings, ArrayList<Review> reviews) {
         this.id = id;

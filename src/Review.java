@@ -6,14 +6,39 @@ import java.io.Serializable;
  * Review
  */
 public class Review implements Serializable{
-    int rating;
-    String name;
-    String comment;
+    private int rating;
+    private String name;
+    private String comment;
     
     public Review(int rating, String name, String comment) {
         this.rating = rating;
         this.name = name;
         this.comment = comment;
     }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    
     
 }

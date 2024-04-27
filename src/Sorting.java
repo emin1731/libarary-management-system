@@ -19,7 +19,7 @@ public class Sorting extends JFrame implements ActionListener {
 
     private JTable table;
     private DefaultTableModel model;
-    private String[] columns = {"Title", "Author", "Ratings", "Reviewssss"};
+    private String[] columns = {"Title", "Author", "Ratings", "Reviews"};
     private Object[][] data;
     private int sortColumn = -1;
     private boolean ascending = true;
@@ -45,7 +45,8 @@ public class Sorting extends JFrame implements ActionListener {
                 if (column == 3 && row < table.getRowCount()) {
                     System.out.println("Clicked on: " + table.getValueAt(row, column) + " -> " + row + " " + column);
                     System.out.println(GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row).getTitle());
-                    openNewWindow(GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row).getTitle());
+                    Book book = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row);
+                    openNewWindow(book);
                     
                 }
             }
@@ -93,16 +94,18 @@ public class Sorting extends JFrame implements ActionListener {
         setSize(400, 300);
         setLocationRelativeTo(null);
     }
-    public static void openNewWindow(String labelText) {
-        JFrame frame = new JFrame("New Window");
-        frame.setSize(500, 700);
-        JLabel label = new JLabel(labelText);
-        frame.getContentPane().add(label);
+    public static void openNewWindow(Book book) {
+        new ReviewsView(book);
         
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window, not the entire application
-        frame.pack();
-        frame.setLocationRelativeTo(null); // Center the window on the screen
-        frame.setVisible(true);
+        // JFrame frame = new JFrame("New Window");
+        // frame.setSize(500, 700);
+        // JLabel label = new JLabel(labelText);
+        // frame.getContentPane().add(label);
+        
+        // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window, not the entire application
+        // frame.pack();
+        // frame.setLocationRelativeTo(null); // Center the window on the screen
+        // frame.setVisible(true);
     }
 
 
