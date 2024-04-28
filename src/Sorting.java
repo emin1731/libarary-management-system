@@ -91,7 +91,7 @@ public class Sorting extends JFrame implements ActionListener {
         });
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(700, 400);
         setLocationRelativeTo(null);
     }
     public static void openNewWindow(Book book) {
