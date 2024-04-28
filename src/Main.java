@@ -1,11 +1,10 @@
 // package src;
 
-import components.RegisterPage;
-import components.TableView;
+import GUI.LoginPage;
 
 public class Main {
     public static void main(String[] args) {
         // new TableView();
-        new RegisterPage();
+        new LoginPage();
     }
 }

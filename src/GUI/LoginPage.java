@@ -1,3 +1,4 @@
+package GUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
@@ -18,11 +19,7 @@ public class LoginPage implements ActionListener{
 	JLabel messageLabel = new JLabel();
 	HashMap<String,String> accounts = this.getLoginData("src/data/Accounts.csv");
 	
-	LoginPage() {
-        // for (String usernameString : accounts.keySet()) {
-        //     System.out.println(usernameString);
-        // }
-
+	public LoginPage() {
 
 		frame.setSize(300, 175);
         frame.setLocationRelativeTo(null);

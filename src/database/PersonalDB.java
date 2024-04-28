@@ -1,3 +1,4 @@
+package database;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +16,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 
-
+import classes.*;
+import database.GeneralDB;
+import GUI.ReviewsView;
 
 public class PersonalDB {
     public static void main(String[] args) {

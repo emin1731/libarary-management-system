@@ -1,3 +1,4 @@
+package GUI;
 /*
  * TabbedPane.java requires one additional file:
  *   images/middle.gif.
@@ -11,7 +12,8 @@
  import javax.swing.JComponent;
  import javax.swing.SwingUtilities;
  import javax.swing.UIManager;
- import java.awt.BorderLayout;
+
+import java.awt.BorderLayout;
  import java.awt.Dimension;
  import java.awt.GridLayout;
  import java.awt.event.KeyEvent;
@@ -24,7 +26,7 @@
          ImageIcon icon = createImageIcon("images/tab-icon.png");
          
         //  JComponent panel1 = makeTextPanel("Panel #1");
-         Sorting generalDB = new Sorting();
+         GeneralDbPage generalDB = new GeneralDbPage();
          tabbedPane.addTab("Tab 1", icon, generalDB.getContentPane(),
                  "Does nothing");
          tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);

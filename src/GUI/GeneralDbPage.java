@@ -1,3 +1,4 @@
+package GUI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -15,7 +16,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.awt.event.MouseEvent;
 
-public class Sorting extends JFrame implements ActionListener {
+import classes.Book;
+import database.GeneralDB;
+import GUI.ReviewsView;
+
+public class GeneralDbPage extends JFrame implements ActionListener {
 
     private JTable table;
     private DefaultTableModel model;
@@ -26,7 +31,7 @@ public class Sorting extends JFrame implements ActionListener {
     private int clickCount = 0;
     private JTextField searchField;
 
-    public Sorting() {
+    public GeneralDbPage() {
         ArrayList<Book> books = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv");
         data = toObjectArray(books);
 
@@ -170,7 +175,7 @@ public class Sorting extends JFrame implements ActionListener {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new Sorting().setVisible(true);
+                new GeneralDbPage().setVisible(true);
             }
         });
     }
