@@ -15,29 +15,30 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 
+import classes.Book;
+import classes.ProfileBook;
+import classes.ProfileBook.Status;
+import classes.Review;
+// import classes.Status;
 
-import classes.*;
-import database.GeneralDB;
-import GUI.ReviewsView;
+
+
 
 public class PersonalDB {
     public static void main(String[] args) {
-        ArrayList<ProfileBook> profileBooks = readPersonalBooksFromCSV("data/personal_books.csv");
+        ArrayList<ProfileBook> profileBooks = readPersonalBooksFromCSV("src\\data\\personal_books.csv");
         for (ProfileBook profileBook : profileBooks) {
             System.out.println(profileBook.toString());
         }
 
-        // ArrayList<Book> books = GeneralDB.readBooksFromCSV("data/GeneralDatabase.csv");
-        // for (Book book : books) {
-        //     System.out.println(book.toString());
-        // }
+        // ArrayList<Book> books = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv");
 
         // ProfileBook pb1 = new ProfileBook(books.get(0));
         // ProfileBook pb2 = new ProfileBook(books.get(1), Status.COMPLETED, 150, LocalDate.now(), null, 4, "Amazing dude");
         // ProfileBook pb3 = new ProfileBook(books.get(1));
-        // writePersonalBookToCSV(pb1, "data/personal_books.csv");
-        // writePersonalBookToCSV(pb2, "data/personal_books.csv");
-        // writePersonalBookToCSV(pb3, "data/personal_books.csv");
+        // writePersonalBookToCSV(pb1, "src/data/personal_books.csv");
+        // writePersonalBookToCSV(pb2, "src/data/personal_books.csv");
+        // writePersonalBookToCSV(pb3, "src/data/personal_books.csv");
 
       
     }
@@ -56,14 +57,7 @@ public class PersonalDB {
 
           ArrayList<Review> reviews = deserializeArrayListFromString(data[4]);
 
-        //   Status status = (Status) deserializeObjectFromString(data[5]);
-        //   Integer timeSpent = (Integer) deserializeObjectFromString(data[6]);
-        //   LocalDate startDate = (LocalDate) deserializeObjectFromString(data[7]);
-        //   LocalDate endDate = (LocalDate) deserializeObjectFromString(data[8]);
-        //   Integer userRating = (Integer) deserializeObjectFromString(data[9]);
-        //   String userReview = (String) deserializeObjectFromString(data[10]);
-
-        Status status = deserializeObjectFromString(data[5]);
+        Status status = Status.valueOf(data[5]);
         Integer timeSpent = Integer.parseInt(data[6]);
         LocalDate startDate = deserializeObjectFromString(data[7]);
         LocalDate endDate = deserializeObjectFromString(data[8]);
@@ -95,7 +89,8 @@ public class PersonalDB {
             csvLine.append(serializeObjectToString(profileBook.getRatings())).append(",");
             csvLine.append(serializeObjectToString(profileBook.getReviews())).append(",");
 
-            csvLine.append(serializeObjectToString(profileBook.getStatus())).append(",");
+            // csvLine.append(serializeObjectToString(profileBook.getStatus())).append(",");
+            csvLine.append(profileBook.getStatus()).append(",");
             csvLine.append(profileBook.getTimeSpent()).append(",");
             csvLine.append(serializeObjectToString(profileBook.getStartDate())).append(",");
             csvLine.append(serializeObjectToString(profileBook.getEndDate())).append(",");

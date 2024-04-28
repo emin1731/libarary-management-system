@@ -27,13 +27,13 @@ import java.awt.BorderLayout;
          
         //  JComponent panel1 = makeTextPanel("Panel #1");
          GeneralDbPage generalDB = new GeneralDbPage();
-         tabbedPane.addTab("Tab 1", icon, generalDB.getContentPane(),
-                 "Does nothing");
+         tabbedPane.addTab("General Database", icon, generalDB.getContentPane(),
+                 "Иrowse the available book library");
          tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
          
          JComponent panel2 = makeTextPanel("Panel #2");
-         tabbedPane.addTab("Tab 2", icon, panel2,
-                 "Does twice as much nothing");
+         tabbedPane.addTab("Personal Database", icon, panel2,
+                 "Browse and add books to your personal  databse");
          tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
          
   
