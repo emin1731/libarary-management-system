@@ -8,6 +8,13 @@ import exceptions.InvalidRatingException;
 
 
 public class ProfileBook extends Book{
+    public enum Status{
+        NOT_STARTED,
+        ONGOING,
+        COMPLETED
+      }
+
+      
     private Status status;
     private Integer timeSpent;
     private LocalDate startDate;
