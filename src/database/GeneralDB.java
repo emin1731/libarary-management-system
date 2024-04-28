@@ -1,3 +1,4 @@
+package database;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,7 +15,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.UUID;
 
-
+import classes.Book;
+import classes.Review;
 
 
 public class GeneralDB {

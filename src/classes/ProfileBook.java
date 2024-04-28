@@ -1,13 +1,11 @@
+package classes;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import exceptions.InvalidRatingException;
 
-enum Status{
-    NOT_STARTED,
-    ONGOING,
-    COMPLETED
-}
+
 
 public class ProfileBook extends Book{
     private Status status;

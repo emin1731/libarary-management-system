@@ -1,14 +1,26 @@
+package GUI;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
+// import org.w3c.dom.events.MouseEvent;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.awt.event.MouseEvent;
 
-public class Sorting extends JFrame implements ActionListener {
+import classes.Book;
+import database.GeneralDB;
+import GUI.ReviewsView;
+
+public class GeneralDbPage extends JFrame implements ActionListener {
 
     private JTable table;
     private DefaultTableModel model;
@@ -19,12 +31,33 @@ public class Sorting extends JFrame implements ActionListener {
     private int clickCount = 0;
     private JTextField searchField;
 
-    public Sorting(String csvFilePath) {
-        ArrayList<Book> books = GeneralDB.readBooksFromCSV("Chapter1/src/data/GeneralDatabase.csv");
+    public GeneralDbPage() {
+        ArrayList<Book> books = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv");
         data = toObjectArray(books);
 
         model = new DefaultTableModel(data, columns);
         table = new JTable(model);
+
+
+        // DRAFT
+
+        table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int column = table.getColumnModel().getColumnIndexAtX(e.getX());
+                int row = e.getY() / table.getRowHeight();
+                if (column == 3 && row < table.getRowCount()) {
+                    System.out.println("Clicked on: " + table.getValueAt(row, column) + " -> " + row + " " + column);
+                    System.out.println(GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row).getTitle());
+                    Book book = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row);
+                    openNewWindow(book);
+                    
+                }
+            }
+        });
+        //
+
 
         JScrollPane scrollPane = new JScrollPane(table);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -63,9 +96,23 @@ public class Sorting extends JFrame implements ActionListener {
         });
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(700, 400);
         setLocationRelativeTo(null);
     }
+    public static void openNewWindow(Book book) {
+        new ReviewsView(book);
+        
+        // JFrame frame = new JFrame("New Window");
+        // frame.setSize(500, 700);
+        // JLabel label = new JLabel(labelText);
+        // frame.getContentPane().add(label);
+        
+        // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window, not the entire application
+        // frame.pack();
+        // frame.setLocationRelativeTo(null); // Center the window on the screen
+        // frame.setVisible(true);
+    }
+
 
     public Object[][] toObjectArray(ArrayList<Book> books) {
         Object[][] result = new Object[books.size()][4];
@@ -73,8 +120,9 @@ public class Sorting extends JFrame implements ActionListener {
             Book book = books.get(i);
             result[i][0] = book.getTitle();
             result[i][1] = book.getAuthor();
-            result[i][2] = "Ratings"; // Placeholder for ratings
-            result[i][3] = "Reviews"; // Placeholder for reviews
+            result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings"; // Placeholder for ratings
+            // result[i][3] = "Reviews"; // Placeholder for reviews
+            result[i][3] = book.getReviewsUsersString(); // Placeholder for reviews
         }
         return result;
     }
@@ -127,7 +175,7 @@ public class Sorting extends JFrame implements ActionListener {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new Sorting("C:/Users/ismai/OneDrive/Рабочий стол/ayla pp2 project/team-project-team-54/brodsky.csv").setVisible(true);
+                new GeneralDbPage().setVisible(true);
             }
         });
     }
@@ -137,5 +185,18 @@ public class Sorting extends JFrame implements ActionListener {
         if (e.getSource() instanceof JButton) {
             performSearch(searchField.getText());
         }
+    }
+}
+
+
+
+class ClickableCellRenderer extends DefaultTableCellRenderer {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        if (column == 1) {
+            setForeground(Color.BLUE);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+        return this;
     }
 }

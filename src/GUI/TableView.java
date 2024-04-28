@@ -1,4 +1,4 @@
-package components;
+package GUI;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
