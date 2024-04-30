@@ -1,10 +1,8 @@
 package GUI;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-//import org.w3c.dom.events.MouseEvent;
 import java.awt.event.MouseEvent;
 import java.time.format.DateTimeFormatter;
 
@@ -12,8 +10,6 @@ import classes.ProfileBook;
 import database.PersonalDB;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +20,7 @@ public class PersonalDbPage extends JFrame {
 
     private JTable table;
     private DefaultTableModel model;
-    private String[] columns = {"Id", "Title", "Author", "Ratings", "Reviews", "Status", "Time Spent", "Start Date", "End Date", "User Rating", "User Review"};
+    private String[] columns = {"Title", "Author", "Ratings", "Reviews", "Status", "Time Spent", "Start Date", "End Date", "User Rating", "User Review"};
     private Object[][] data;
 
     private int sortColumn = -1;
@@ -75,18 +71,16 @@ public class PersonalDbPage extends JFrame {
         Object[][] result = new Object[users.size()][11];
         for (int i = 0; i < users.size(); i++) {
             ProfileBook user = users.get(i);
-            result[i][0] = user.getId();
-            result[i][1] = user.getTitle();
-            result[i][2] = user.getAuthor();
-            result[i][3] = (user.getAverageRating() != -1) ? user.getAverageRating() : "No ratings";
-            result[i][4] = user.getReviewsUsersString();
-            result[i][5] = user.getStatus().name();
-            result[i][5] = user.getStatus();
-            result[i][6] = user.getTimeSpent();
-            result[i][7] = user.getStartDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-            result[i][8] = (user.getEndDate() == null) ? "End date: null" : user.getEndDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-            result[i][9] = user.getRating();
-            result[i][10] = user.getReview();
+            result[i][0] = user.getTitle();
+            result[i][1] = user.getAuthor();
+            result[i][2] = (user.getAverageRating() != -1) ? user.getAverageRating() : "No ratings";
+            result[i][3] = user.getReviewsUsersString();
+            result[i][4] = user.getStatus().name();
+            result[i][5] = user.getTimeSpent();
+            result[i][6] = user.getStartDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+            result[i][7] = (user.getEndDate() == null) ? "End date: null" : user.getEndDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+            result[i][8] = user.getRating();
+            result[i][9] = user.getReview();
         }
         return result;
     }

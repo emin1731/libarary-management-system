@@ -1,25 +1,37 @@
 package GUI;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
-import javax.swing.*;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import database.AccountDB;
+import exceptions.UserNotFoundException;
 
 public class LoginPage implements ActionListener{
 	
 	JFrame frame = new JFrame("Login");
 	JButton loginButton = new JButton("Login");
-	JButton registerButton = new JButton("Reset");
+	JButton registerButton = new JButton("Register");
 	JTextField userIDField = new JTextField(20);
 	JPasswordField userPasswordField = new JPasswordField(20);
 	JLabel userIDLabel = new JLabel("userID:");
 	JLabel userPasswordLabel = new JLabel("password:");
 	JLabel messageLabel = new JLabel();
-	HashMap<String,String> accounts = this.getLoginData("src/data/Accounts.csv");
+	AccountDB account;
 	
 	public LoginPage() {
+		account = new AccountDB("src/database/AccountDB.java");
 
 		frame.setSize(300, 175);
         frame.setLocationRelativeTo(null);
@@ -29,11 +41,9 @@ public class LoginPage implements ActionListener{
 		userIDLabel.setBounds(10, 10, 80, 25);
 		panel.add(userIDLabel);
 
-
 		messageLabel.setBounds(10, 70, 200, 25);
 		messageLabel.setFont(new Font(null,Font.ITALIC, 14));
 		panel.add(messageLabel);
-
 
 		userIDField.setBounds(100, 10, 160, 25);
 		panel.add(userIDField);
@@ -66,73 +76,39 @@ public class LoginPage implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
 		if(e.getSource()==registerButton) {
-			userIDField.setText("");
-			userPasswordField.setText("");
+			new RegisterPage();
+			frame.dispose();
 		}
-		
+
 		if(e.getSource()==loginButton) {
-			
 			String userID = userIDField.getText();
 			String password = String.valueOf(userPasswordField.getPassword());
-			
-			if(accounts.containsKey(userID)) {
-				if(accounts.get(userID).equals(password)) {
-					messageLabel.setForeground(Color.green);
-					messageLabel.setText("Login successful");
-					// WelcomePage welcomePage = new WelcomePage(userID);
-					TabbedPane mainPage = new TabbedPane();
 
+			try {
+				if (account.loginUser(userID, password)) {
+					TabbedPane mainPage = new TabbedPane();
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							//Turn off metal's use of bold fonts
-					UIManager.put("swing.boldMetal", Boolean.FALSE);
-					TabbedPane.createAndShowGUI();
+							UIManager.put("swing.boldMetal", Boolean.FALSE);
+							TabbedPane.createAndShowGUI();
 						}
 					});
-
-
 					frame.dispose();
-                    System.out.println("WELCOME PAGE");
-				}
-				else {
+				} else {
 					messageLabel.setForeground(Color.red);
 					messageLabel.setText("Wrong password");
 				}
-
-			}
-			else {
+			} catch (UserNotFoundException er) {
 				messageLabel.setForeground(Color.red);
 				messageLabel.setText("username not found");
 			}
+			
 		}
 	}
-    public HashMap<String,String> getLoginData(String fileName) {
-        HashMap<String,String> accounts = new HashMap<String,String>();
-    
-      try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-        reader.readLine(); // Skip header line
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] data = line.split(",");
-            String username = data[0];
-            String password = data[1];
-
-            accounts.put(username, password);
-        
-        }
-      } catch (IOException e) {
-        System.err.println("Error reading CSV file: " + e.getMessage());
-      }
-    
-      return accounts;
-    }
-    
+ 
     public static void main(String[] args) {
         new LoginPage();
-        // for (String username : accounts.keySet()) {
-        //     System.out.println(username);
-        // }
+
     }
 }
