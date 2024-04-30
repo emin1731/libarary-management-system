@@ -86,8 +86,21 @@ public class RegisterPage implements ActionListener {
 			catch (UserNotFoundException er) {
 				account.registerUser(userID, password);
 				PersonalDB.createNewPersonalDB("src/data/users/" + userID + ".csv");
+
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						// Turn off metal's use of bold fonts
+						UIManager.put("swing.boldMetal", Boolean.FALSE);
+						new TabbedPane(userID).setVisible(true);
+					}
+				});
+
+				
 				messageLabel.setForeground(Color.green);
 				messageLabel.setText("Registered");
+
+				new TabbedPane(userID);
+				frame.dispose();
 			}
 			
 		}

@@ -78,5 +78,9 @@ public class AccountDB {
           return users;
     }
 
+    public static void main(String[] args) {
+        // AccountDB acc = new AccountDB()
+    }
+
 }
 
