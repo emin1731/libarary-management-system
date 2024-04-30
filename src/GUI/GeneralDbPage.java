@@ -4,8 +4,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-// import org.w3c.dom.events.MouseEvent;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +18,8 @@ import classes.Book;
 import database.GeneralDB;
 import GUI.ReviewsView;
 
-public class GeneralDbPage extends JFrame implements ActionListener {
+
+public class GeneralDbPage extends JPanel implements ActionListener {
 
     private JTable table;
     private DefaultTableModel model;
@@ -32,14 +31,13 @@ public class GeneralDbPage extends JFrame implements ActionListener {
     private JTextField searchField;
 
     public GeneralDbPage() {
+        super(new BorderLayout());
+
         ArrayList<Book> books = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv");
         data = toObjectArray(books);
 
         model = new DefaultTableModel(data, columns);
         table = new JTable(model);
-
-
-        // DRAFT
 
         table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
         table.addMouseListener(new MouseAdapter() {
@@ -52,27 +50,23 @@ public class GeneralDbPage extends JFrame implements ActionListener {
                     System.out.println(GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row).getTitle());
                     Book book = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row);
                     openNewWindow(book);
-                    
                 }
             }
         });
-        //
-
 
         JScrollPane scrollPane = new JScrollPane(table);
-        getContentPane().add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
-        // Create a panel for the search bar
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         searchField = new JTextField(20);
         JButton searchButton = new JButton("Search Here");
-        searchButton.addActionListener(this); // Register the button for ActionListener
+        searchButton.addActionListener(this);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
-        getContentPane().add(searchPanel, BorderLayout.NORTH);
+        add(searchPanel, BorderLayout.NORTH);
 
-        table.getTableHeader().addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        table.getTableHeader().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 int col = table.columnAtPoint(evt.getPoint());
                 if (col == sortColumn) {
                     if (clickCount == 0) {
@@ -95,24 +89,19 @@ public class GeneralDbPage extends JFrame implements ActionListener {
             }
         });
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(700, 400);
-        setLocationRelativeTo(null);
-    }
-    public static void openNewWindow(Book book) {
-        new ReviewsView(book);
-        
-        // JFrame frame = new JFrame("New Window");
-        // frame.setSize(500, 700);
-        // JLabel label = new JLabel(labelText);
-        // frame.getContentPane().add(label);
-        
-        // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window, not the entire application
-        // frame.pack();
-        // frame.setLocationRelativeTo(null); // Center the window on the screen
-        // frame.setVisible(true);
     }
 
+    public static void openNewWindow(Book book) {
+        JFrame frame = new JFrame("New Window");
+        frame.setSize(500, 700);
+        JLabel label = new JLabel("Title: " + book.getTitle() + ", Author: " + book.getAuthor());
+        frame.add(label);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 
     public Object[][] toObjectArray(ArrayList<Book> books) {
         Object[][] result = new Object[books.size()][4];
@@ -120,9 +109,8 @@ public class GeneralDbPage extends JFrame implements ActionListener {
             Book book = books.get(i);
             result[i][0] = book.getTitle();
             result[i][1] = book.getAuthor();
-            result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings"; // Placeholder for ratings
-            // result[i][3] = "Reviews"; // Placeholder for reviews
-            result[i][3] = book.getReviewsUsersString(); // Placeholder for reviews
+            result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings";
+            result[i][3] = book.getReviewsUsersString();
         }
         return result;
     }
@@ -172,23 +160,26 @@ public class GeneralDbPage extends JFrame implements ActionListener {
         table.setModel(model);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new GeneralDbPage().setVisible(true);
-            }
-        });
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof JButton) {
             performSearch(searchField.getText());
         }
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JFrame frame = new JFrame("General Database");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new GeneralDbPage());
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            }
+        });
+    }
 }
-
-
 
 class ClickableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

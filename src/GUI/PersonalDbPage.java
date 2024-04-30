@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 
-public class PersonalDbPage extends JFrame {
+public class PersonalDbPage extends JPanel {
 
     private JTable table;
     private DefaultTableModel model;
@@ -27,15 +27,17 @@ public class PersonalDbPage extends JFrame {
     private boolean ascending = true;
     private int clickCount = 0;
 
-    public PersonalDbPage() {
-        ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/personal_books.csv");
+    public PersonalDbPage(String username) {
+        super(new BorderLayout());
+
+        ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/users/" + username + ".csv");
         data = toObjectArray(users);
 
         model = new DefaultTableModel(data, columns);
         table = new JTable(model);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        getContentPane().add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
         table.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
@@ -62,9 +64,17 @@ public class PersonalDbPage extends JFrame {
             }
         });
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Create a button
+        JButton button = new JButton("Click me");
+        button.addActionListener(e -> {
+            // Handle button click event here
+        });
+
+        // Add the button to the panel at the bottom right
+        add(button, BorderLayout.SOUTH);
+
         setSize(700, 400);
-        setLocationRelativeTo(null);
+        // setLocationRelativeTo(null);
     }
 
     private Object[][] toObjectArray(ArrayList<ProfileBook> users) {
@@ -86,6 +96,7 @@ public class PersonalDbPage extends JFrame {
     }
 
     private void sortTable() {
+
         if (sortColumn == -1) {
             model.setDataVector(data, columns);
             table.setModel(model);
@@ -114,7 +125,12 @@ public class PersonalDbPage extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new PersonalDbPage().setVisible(true);
+                JFrame frame = new JFrame("Personal Database");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(new PersonalDbPage("emin"));
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
             }
         });
     }

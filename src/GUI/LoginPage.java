@@ -31,7 +31,7 @@ public class LoginPage implements ActionListener{
 	AccountDB account;
 	
 	public LoginPage() {
-		account = new AccountDB("src/database/AccountDB.java");
+		account = new AccountDB("src/data/Accounts.csv");
 
 		frame.setSize(300, 175);
         frame.setLocationRelativeTo(null);
@@ -87,14 +87,16 @@ public class LoginPage implements ActionListener{
 
 			try {
 				if (account.loginUser(userID, password)) {
-					TabbedPane mainPage = new TabbedPane();
+					// TabbedPane mainPage = new TabbedPane(userID);
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
+							// Turn off metal's use of bold fonts
 							UIManager.put("swing.boldMetal", Boolean.FALSE);
-							TabbedPane.createAndShowGUI();
+							new TabbedPane(userID).setVisible(true);
 						}
 					});
 					frame.dispose();
+					// System.out.println("SUCCESS");
 				} else {
 					messageLabel.setForeground(Color.red);
 					messageLabel.setText("Wrong password");
