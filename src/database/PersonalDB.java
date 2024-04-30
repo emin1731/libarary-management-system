@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -57,13 +58,13 @@ public class PersonalDB {
 
           ArrayList<Review> reviews = deserializeArrayListFromString(data[4]);
 
-        Status status = Status.valueOf(data[5]);
-        Integer timeSpent = Integer.parseInt(data[6]);
-        LocalDate startDate = deserializeObjectFromString(data[7]);
-        LocalDate endDate = deserializeObjectFromString(data[8]);
-        Integer userRating = Integer.parseInt(data[9]);
-        String userReview = data[10];
-    
+          Status status = Status.valueOf(data[5]);
+          Integer timeSpent = Integer.parseInt(data[6]);
+          LocalDate startDate = deserializeObjectFromString(data[7]);
+          LocalDate endDate = deserializeObjectFromString(data[8]);
+          Integer userRating = Integer.parseInt(data[9]);
+          String userReview = data[10];
+      
           ProfileBook profileBook = new ProfileBook(id, title, author, ratings, reviews, status, timeSpent, startDate, endDate, userRating, userReview);
           profileBooks.add(profileBook);
         }
@@ -103,6 +104,21 @@ public class PersonalDB {
             System.err.println("Error writing to CSV file: " + e.getMessage());
         }
     }
+
+
+    public static void createNewPersonalDB(String filename) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            // Write header row
+            writer.append("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date,End Date,User Rating,User Review");
+            writer.append("\n");
+
+
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     
     
 

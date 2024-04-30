@@ -27,8 +27,8 @@ public class PersonalDbPage extends JFrame {
     private boolean ascending = true;
     private int clickCount = 0;
 
-    public PersonalDbPage() {
-        ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/personal_books.csv");
+    public PersonalDbPage(String username) {
+        ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/users/" + username + ".csv");
         data = toObjectArray(users);
 
         model = new DefaultTableModel(data, columns);
@@ -114,7 +114,7 @@ public class PersonalDbPage extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new PersonalDbPage().setVisible(true);
+                new PersonalDbPage("emin").setVisible(true);
             }
         });
     }

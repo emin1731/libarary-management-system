@@ -8,19 +8,25 @@ import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 
+import database.AccountDB;
+import database.PersonalDB;
+import exceptions.UserNotFoundException;
 
-public class RegisterPage{
+public class RegisterPage implements ActionListener {
 	JFrame frame = new JFrame("Register");
+	JButton registerButton = new JButton("Register");
 	JButton loginButton = new JButton("Login");
-	JButton registerButton = new JButton("Reset");
 	JTextField userIDField = new JTextField(20);
 	JPasswordField userPasswordField = new JPasswordField(20);
 	JLabel userIDLabel = new JLabel("userID:");
 	JLabel userPasswordLabel = new JLabel("password:");
 	JLabel messageLabel = new JLabel();
+	AccountDB account;
 	// HashMap<String,String> accounts = this.getLoginData("src/data/Accounts.csv");
 
 	public RegisterPage() {
+		account = new AccountDB("src/data/Accounts.csv");
+
 		frame.setSize(300, 175);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,21 +50,56 @@ public class RegisterPage{
 		userPasswordField.setBounds(100, 40, 160, 25);
 		panel.add(userPasswordField);
 
-		loginButton.setBounds(10, 100, 80, 25);
-		loginButton.setFocusable(false);
-		// loginButton.addActionListener(this);
-		panel.add(loginButton);
-		
-		registerButton.setBounds(180, 100, 80, 25);
+		registerButton.setBounds(10, 100, 80, 25);
 		registerButton.setFocusable(false);
-		// registerButton.addActionListener(this);
+		registerButton.addActionListener(this);
 		panel.add(registerButton);
+		
+		loginButton.setBounds(180, 100, 80, 25);
+		loginButton.setFocusable(false);
+		loginButton.addActionListener(this);
+		panel.add(loginButton);
 
 		panel.setLayout(null);
         panel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
         frame.add(panel);
 		frame.setVisible(true);
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+
+		if(e.getSource()==registerButton) {
+			System.out.println("REG");
+			String userID = userIDField.getText();
+			String password = String.valueOf(userPasswordField.getPassword());
+
+			try {
+				if (account.loginUser(userID, password)) {
+					System.out.println("HELLO");
+				}
+				
+			} 
+			catch (UserNotFoundException er) {
+				account.registerUser(userID, password);
+				PersonalDB.createNewPersonalDB("src/data/users/" + userID + ".csv");
+				messageLabel.setForeground(Color.green);
+				messageLabel.setText("Registered");
+			}
+			
+		}
+
+		if(e.getSource()==loginButton) {
+			// System.out.println("LOG");
+			new LoginPage();
+			frame.dispose();
+		}
+	}
+	public static void main(String[] args) {
+		new RegisterPage();
 	}
 
 }
