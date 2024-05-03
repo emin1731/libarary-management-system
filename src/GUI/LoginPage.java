@@ -92,7 +92,7 @@ public class LoginPage implements ActionListener{
 						public void run() {
 							// Turn off metal's use of bold fonts
 							UIManager.put("swing.boldMetal", Boolean.FALSE);
-							new TabbedPane(userID).setVisible(true);
+							new UserPage(userID).setVisible(true);
 						}
 					});
 					frame.dispose();

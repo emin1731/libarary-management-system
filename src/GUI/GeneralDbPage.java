@@ -3,6 +3,7 @@ package GUI;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,18 +13,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.awt.event.MouseEvent;
 
 import classes.Book;
 import database.GeneralDB;
-import GUI.ReviewsView;
+import utils.TableCellListener;
 
+
+import java.util.function.BiConsumer;
 
 public class GeneralDbPage extends JPanel implements ActionListener {
 
     private JTable table;
     private DefaultTableModel model;
-    private String[] columns = {"Title", "Author", "Ratings", "Reviews"};
+    private String[] columns = {"Title", "Author", "Ratings", "Reviews", "Actions"}; // Updated columns
     private Object[][] data;
     private int sortColumn = -1;
     private boolean ascending = true;
@@ -32,12 +36,55 @@ public class GeneralDbPage extends JPanel implements ActionListener {
 
     public GeneralDbPage() {
         super(new BorderLayout());
+        GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
 
-        ArrayList<Book> books = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv");
+        ArrayList<Book> books = generalDB.readBooksFromCSV();
         data = toObjectArray(books);
 
         model = new DefaultTableModel(data, columns);
-        table = new JTable(model);
+        table = new JTable(model) {
+            // @Override
+            // public boolean isCellEditable(int row, int column) {
+            //     return false;
+            // }
+        };
+
+        new TableCellListener(table, 0, (row, newValue) -> {
+            System.out.println(books.get(row).toString());
+        
+            Book newBook = books.get(row).clone();
+            newBook.setTitle(newValue);
+            try {
+                generalDB.updateBook(newBook);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                // TODO: handle exception
+            }
+        });
+
+        new TableCellListener(table, 1, (row, newValue) -> {
+            System.out.println(books.get(row).toString());
+        
+            Book newBook = books.get(row).clone();
+            newBook.setAuthor(newValue);
+            try {
+                generalDB.updateBook(newBook);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                // TODO: handle exception
+            }
+        });
+
+
+        table.setColumnSelectionAllowed(false);
+        table.getTableHeader().setReorderingAllowed(false);
+
+
+        table.getColumn("Actions").setCellRenderer(new ButtonRenderer());
+        // table.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox()));
+
 
         table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
         table.addMouseListener(new MouseAdapter() {
@@ -47,8 +94,8 @@ public class GeneralDbPage extends JPanel implements ActionListener {
                 int row = e.getY() / table.getRowHeight();
                 if (column == 3 && row < table.getRowCount()) {
                     System.out.println("Clicked on: " + table.getValueAt(row, column) + " -> " + row + " " + column);
-                    System.out.println(GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row).getTitle());
-                    Book book = GeneralDB.readBooksFromCSV("src/data/GeneralDatabase.csv").get(row);
+                    System.out.println(generalDB.readBooksFromCSV().get(row).getTitle());
+                    Book book = generalDB.readBooksFromCSV().get(row);
                     openNewWindow(book);
                 }
             }
@@ -104,13 +151,19 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     }
 
     public Object[][] toObjectArray(ArrayList<Book> books) {
-        Object[][] result = new Object[books.size()][4];
+        Object[][] result = new Object[books.size()][5]; // Updated array size
         for (int i = 0; i < books.size(); i++) {
             Book book = books.get(i);
             result[i][0] = book.getTitle();
             result[i][1] = book.getAuthor();
             result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings";
             result[i][3] = book.getReviewsUsersString();
+            // Creating JButton for each row
+
+
+            // JButton button = new JButton("Action");
+            // button.addActionListener(this);
+            result[i][4] = "Edit";
         }
         return result;
     }
@@ -129,7 +182,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
                 Object o2 = row2[sortColumn];
                 if (o1 instanceof Comparable && o2 instanceof Comparable) {
                     Comparable c1 = (Comparable) o1;
-                    Comparable c2 = (Comparable) o2;
+                    Comparable<String> c2 = (Comparable) o2;
                     int result = c1.compareTo(c2);
                     return ascending ? result : -result;
                 }
@@ -163,6 +216,15 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof JButton) {
+            // Handle button clicks here
+            JButton button = (JButton) e.getSource();
+            // Find the row of the clicked button
+            int row = table.rowAtPoint(button.getLocation());
+            // Perform action based on the row
+            // For example, print the title and author of the book
+            System.out.println("Button clicked in row: " + row);
+            System.out.println("Title: " + data[row][0] + ", Author: " + data[row][1]);
+        } else if (e.getSource() instanceof JButton) {
             performSearch(searchField.getText());
         }
     }
@@ -191,3 +253,24 @@ class ClickableCellRenderer extends DefaultTableCellRenderer {
         return this;
     }
 }
+
+
+class ButtonRenderer extends JButton implements TableCellRenderer {
+
+    public ButtonRenderer() {
+      setOpaque(true);
+    }
+  
+    public Component getTableCellRendererComponent(JTable table, Object value,
+        boolean isSelected, boolean hasFocus, int row, int column) {
+      if (isSelected) {
+        setForeground(table.getSelectionForeground());
+        setBackground(table.getSelectionBackground());
+      } else {
+        setForeground(table.getForeground());
+        setBackground(UIManager.getColor("Button.background"));
+      }
+      setText((value == null) ? "" : value.toString());
+      return this;
+    }
+  }

@@ -1,17 +1,12 @@
 package database;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import exceptions.UserNotFoundException;
 
@@ -78,23 +73,17 @@ public class AccountDB {
           }
           return users;
     }
-
-    public static void main(String[] args) {
-        AccountDB acc = new AccountDB("src/data/Accounts.csv");
-        HashMap<String, String> data = acc.getAllUsers();
-        try {
-            if (acc.loginUser("emin", "123")) {
-                System.out.println("LOGIN");
-            }
-            
-            
-        } catch (Exception e) {
-            System.out.println("ERROR");
-            // TODO: handle exception
-        }
-
-
-    }
-
+    // public static void main(String[] args) {
+    //     AccountDB acc = new AccountDB("src/data/Accounts.csv");
+    //     HashMap<String, String> data = acc.getAllUsers();
+    //     try {
+    //         if (acc.loginUser("emin", "123")) {
+    //             System.out.println("LOGIN");
+    //         }
+    //     } catch (Exception e) {
+    //         System.out.println("ERROR");
+    //         // TODO: handle exception
+    //     }
+    // }
 }
 

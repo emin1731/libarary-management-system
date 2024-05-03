@@ -22,9 +22,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class TabbedPane extends JFrame {
+public class UserPage extends JFrame {
 
-    public TabbedPane(String username) {
+    public UserPage(String username) {
         super("TabbedPane");
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -52,7 +52,7 @@ public class TabbedPane extends JFrame {
 
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = TabbedPane.class.getResource(path);
+        java.net.URL imgURL = UserPage.class.getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL);
         } else {
@@ -68,7 +68,7 @@ public class TabbedPane extends JFrame {
             public void run() {
                 // Turn off metal's use of bold fonts
                 UIManager.put("swing.boldMetal", Boolean.FALSE);
-                new TabbedPane("emin").setVisible(true);
+                new UserPage("emin").setVisible(true);
             }
         });
     }
