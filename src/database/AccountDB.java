@@ -35,7 +35,7 @@ public class AccountDB {
             csvLine.append(username).append(",");
             csvLine.append(password);
 
-            writer.write(csvLine.toString() + "\n");
+            writer.write("\n" + csvLine.toString() );
             writer.flush();
         } catch (IOException e) {
             System.err.println("Error writing to CSV file: " + e.getMessage());
@@ -66,6 +66,7 @@ public class AccountDB {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
+                System.out.println(data[0] + " " + data[1]);
                 String username = data[0];
                 String password = data[1];
     
@@ -79,7 +80,20 @@ public class AccountDB {
     }
 
     public static void main(String[] args) {
-        // AccountDB acc = new AccountDB()
+        AccountDB acc = new AccountDB("src/data/Accounts.csv");
+        HashMap<String, String> data = acc.getAllUsers();
+        try {
+            if (acc.loginUser("emin", "123")) {
+                System.out.println("LOGIN");
+            }
+            
+            
+        } catch (Exception e) {
+            System.out.println("ERROR");
+            // TODO: handle exception
+        }
+
+
     }
 
 }
