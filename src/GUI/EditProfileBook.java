@@ -2,11 +2,8 @@ package GUI;
 
 import javax.security.auth.Refreshable;
 import javax.swing.*;
-
-import classes.Book;
 import classes.ProfileBook;
 import database.PersonalDB;
-
 import java.awt.*;
 import java.time.LocalDate;
 import java.awt.event.*;
@@ -156,6 +153,7 @@ public class EditProfileBook extends JFrame {
     }
 
     // Get LocalDate from date picker panel
+    @SuppressWarnings("unchecked")
     private LocalDate getDateFromPicker(JPanel datePickerPanel) {
         JComboBox<String> dayCombo = (JComboBox<String>) datePickerPanel.getComponent(0);
         JComboBox<String> monthCombo = (JComboBox<String>) datePickerPanel.getComponent(1);

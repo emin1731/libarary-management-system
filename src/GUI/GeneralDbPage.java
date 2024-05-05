@@ -17,17 +17,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EventObject;
 import java.util.List;
-import java.util.function.Consumer;
 import java.awt.event.MouseEvent;
 
 import classes.Book;
 import classes.ProfileBook;
 import database.GeneralDB;
-import database.PersonalDB;
 import utils.TableCellListener;
 
-
-import java.util.function.BiConsumer;
 
 public class GeneralDbPage extends JPanel implements ActionListener {
 
@@ -94,8 +90,8 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         table.getTableHeader().setReorderingAllowed(false);
 
 
-        table.getColumn("Actions").setCellRenderer(new ToggleButton(books, username, parentFrame));
-        table.getColumn("Actions").setCellEditor(new ToggleButton(books, username, parentFrame));
+        table.getColumn("Actions").setCellRenderer(new ToggleButton(books, this.username, this.parentFrame));
+        table.getColumn("Actions").setCellEditor(new ToggleButton(books, this.username, this.parentFrame));
 
 
         table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
@@ -188,6 +184,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         }
 
         Arrays.sort(data, new Comparator<Object[]>() {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
             @Override
             public int compare(Object[] row1, Object[] row2) {
                 Object o1 = row1[sortColumn];

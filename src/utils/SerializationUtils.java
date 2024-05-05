@@ -26,7 +26,7 @@ public class SerializationUtils {
 
     // Helper method to deserialize an object from a String
     @SuppressWarnings("unchecked")
-    public static <T> ArrayList<T> deserializeObjectFromString(String serializedString) {
+    public static <T> ArrayList<T> deserializeArrayListFromString(String serializedString) {
         byte[] bytes = Base64.getDecoder().decode(serializedString.trim());
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
              ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
@@ -38,4 +38,19 @@ public class SerializationUtils {
             return null;
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T deserializeObjectFromString(String serializedString) {
+        byte[] bytes = Base64.getDecoder().decode(serializedString.trim());
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+
+            Object obj = objectInputStream.readObject();
+            return (T) obj;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
 }

@@ -4,12 +4,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import utils.UpdateEvent;
-import utils.UpdateEventListener;
-
 import java.awt.event.KeyEvent;
 import java.net.URL;
 
@@ -21,7 +17,7 @@ public class UserPage extends JFrame implements Refreshable {
     private GeneralDbPage generalDB;
     private PersonalDbPage personalDbPage;
     private boolean isCurrentTabGeneralDB;
-    private String username;
+    // private String username;
 
     public UserPage(String username) {
         super("Hello " + username + "!");

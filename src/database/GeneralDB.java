@@ -84,9 +84,9 @@ public class GeneralDB {
           String id = data[0];
           String title = data[1];
           String author = data[2];
-          ArrayList<Integer> ratings = SerializationUtils.deserializeObjectFromString(data[3]);
+          ArrayList<Integer> ratings = SerializationUtils.deserializeArrayListFromString(data[3]);
 
-          ArrayList<Review> reviews = SerializationUtils.deserializeObjectFromString(data[4]);
+          ArrayList<Review> reviews = SerializationUtils.deserializeArrayListFromString(data[4]);
     
           Book book = new Book(id, title, author, ratings, reviews);
           books.add(book);

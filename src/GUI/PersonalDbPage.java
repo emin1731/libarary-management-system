@@ -85,7 +85,7 @@ public class PersonalDbPage extends JPanel {
         model.setDataVector(data, columns);
         sortTable();
     }
-    
+
 
 
     private Object[][] toObjectArray(ArrayList<ProfileBook> users) {
@@ -115,6 +115,7 @@ public class PersonalDbPage extends JPanel {
         }
 
         Arrays.sort(data, new Comparator<Object[]>() {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
             @Override
             public int compare(Object[] row1, Object[] row2) {
                 Object o1 = row1[sortColumn];

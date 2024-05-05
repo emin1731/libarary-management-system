@@ -23,7 +23,7 @@ public class EditBook extends JFrame {
         setLayout(new GridLayout(0, 2));
 
         // Initialize JTextFields with book data
-        titleField = new JTextField(book.getTitle());
+        titleField = new JTextField(this.book.getTitle());
         authorField = new JTextField(book.getAuthor());
         // Initialize more fields for other variables if needed
 
