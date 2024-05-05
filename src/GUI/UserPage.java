@@ -1,44 +1,49 @@
 package GUI;
-/*
- * TabbedPane.java requires one additional file:
- *   images/middle.gif.
- */
+import javax.swing.JTabbedPane;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
- import javax.swing.JTabbedPane;
- import javax.swing.ImageIcon;
- import javax.swing.JLabel;
- import javax.swing.JPanel;
- import javax.swing.JFrame;
- import javax.swing.JComponent;
- import javax.swing.SwingUtilities;
- import javax.swing.UIManager;
+import utils.UpdateEvent;
+import utils.UpdateEventListener;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
+import javax.security.auth.RefreshFailedException;
+import javax.security.auth.Refreshable;
 
-public class UserPage extends JFrame {
+
+public class UserPage extends JFrame implements Refreshable {
+    private GeneralDbPage generalDB;
+    private PersonalDbPage personalDbPage;
+    private boolean isCurrentTabGeneralDB;
+    private String username;
 
     public UserPage(String username) {
-        super("TabbedPane");
+        super("Hello " + username + "!");
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        ImageIcon icon = createImageIcon("images/tab-icon.png");
+        ImageIcon icon = createImageIcon("tab-icon.png");
 
         // General Database Page
-        GeneralDbPage generalDB = new GeneralDbPage();
+        this.generalDB = new GeneralDbPage(this, username);
         tabbedPane.addTab("General Database", icon, generalDB, "Browse the available book library");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
         // Personal Database Page
-        PersonalDbPage personalDbPage = new PersonalDbPage(username);
+        this.personalDbPage = new PersonalDbPage(username);
         tabbedPane.addTab("Personal Database", icon, personalDbPage, "Browse and add books to your personal database");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+
+        // Listen for tab selection change
+        tabbedPane.addChangeListener(e -> {
+            JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+            isCurrentTabGeneralDB = sourceTabbedPane.getSelectedIndex() == 0;
+        });
 
         add(tabbedPane);
 
@@ -52,7 +57,8 @@ public class UserPage extends JFrame {
 
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = UserPage.class.getResource(path);
+        URL imgURL = UserPage.class.getResource("/images/" + path);
+
         if (imgURL != null) {
             return new ImageIcon(imgURL);
         } else {
@@ -60,16 +66,33 @@ public class UserPage extends JFrame {
             return null;
         }
     }
+    public void onUpdateEvent(UpdateEvent event) {
+        // Handle the update event
+        System.out.println("Parent frame updated.");
+        personalDbPage.reloadPage();
+    }
+
+
+    @Override
+    public boolean isCurrent() {
+        return isCurrentTabGeneralDB;
+    }
+
+    @Override
+    public void refresh() throws RefreshFailedException {
+        System.out.println("REFRESH");
+        personalDbPage.reloadPage();
+    }
 
     public static void main(String[] args) {
-        // Schedule a job for the event dispatch thread:
-        // creating and showing this application's GUI.
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // Turn off metal's use of bold fonts
-                UIManager.put("swing.boldMetal", Boolean.FALSE);
-                new UserPage("emin").setVisible(true);
-            }
-        });
-    }
+    // Schedule a job for the event dispatch thread:
+    // creating and showing this application's GUI.
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+            // Turn off metal's use of bold fonts
+            UIManager.put("swing.boldMetal", Boolean.FALSE);
+            new UserPage("emin").setVisible(true);
+        }
+    });
+}
 }

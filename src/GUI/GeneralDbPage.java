@@ -1,8 +1,11 @@
 package GUI;
 
+import javax.security.auth.Refreshable;
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import java.awt.*;
@@ -12,12 +15,15 @@ import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 import java.awt.event.MouseEvent;
 
 import classes.Book;
+import classes.ProfileBook;
 import database.GeneralDB;
+import database.PersonalDB;
 import utils.TableCellListener;
 
 
@@ -33,9 +39,15 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     private boolean ascending = true;
     private int clickCount = 0;
     private JTextField searchField;
+    private String username;
+    private Refreshable parentFrame;
 
-    public GeneralDbPage() {
+
+    public GeneralDbPage(Refreshable parentFrame, String username) {
         super(new BorderLayout());
+        this.username = username;
+        this.parentFrame = parentFrame;
+
         GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
 
         ArrayList<Book> books = generalDB.readBooksFromCSV();
@@ -82,8 +94,8 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         table.getTableHeader().setReorderingAllowed(false);
 
 
-        table.getColumn("Actions").setCellRenderer(new ButtonRenderer());
-        // table.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox()));
+        table.getColumn("Actions").setCellRenderer(new ToggleButton(books, username, parentFrame));
+        table.getColumn("Actions").setCellEditor(new ToggleButton(books, username, parentFrame));
 
 
         table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
@@ -163,7 +175,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
 
             // JButton button = new JButton("Action");
             // button.addActionListener(this);
-            result[i][4] = "Edit";
+            result[i][4] = "Add to Favoruite";
         }
         return result;
     }
@@ -229,18 +241,18 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                JFrame frame = new JFrame("General Database");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.add(new GeneralDbPage());
-                frame.pack();
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-            }
-        });
-    }
+    // public static void main(String[] args) {
+    //     SwingUtilities.invokeLater(new Runnable() {
+    //         public void run() {
+    //             JFrame frame = new JFrame("General Database");
+    //             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //             frame.add(new GeneralDbPage(frame, "emin"));
+    //             frame.pack();
+    //             frame.setLocationRelativeTo(null);
+    //             frame.setVisible(true);
+    //         }
+    //     });
+    // }
 }
 
 class ClickableCellRenderer extends DefaultTableCellRenderer {
@@ -255,22 +267,110 @@ class ClickableCellRenderer extends DefaultTableCellRenderer {
 }
 
 
-class ButtonRenderer extends JButton implements TableCellRenderer {
 
-    public ButtonRenderer() {
-      setOpaque(true);
+  class ToggleButton extends JButton implements TableCellRenderer, TableCellEditor {
+
+    private boolean state;
+    private int row;
+    private static final String ACTION_ONE_TEXT = "Action One";
+    private static final String ACTION_TWO_TEXT = "Action Two";
+    ArrayList<Book> books;
+    String username;
+    Refreshable parentFrame;
+
+    public ToggleButton(ArrayList<Book> books, String username, Refreshable parentFrame) {
+        this.books = books;
+        this.username = username;
+        this.parentFrame = parentFrame;
+
+        addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                state = !state;
+                if (state) {
+                    
+                    performActionOne();
+                    setText(ACTION_TWO_TEXT);
+                } else {
+                    performActionTwo();
+                    setText(ACTION_ONE_TEXT);
+                }
+                System.out.println("Button state: " + state + ", Row: " + row);
+            }
+        });
+        setOpaque(true);
     }
-  
-    public Component getTableCellRendererComponent(JTable table, Object value,
-        boolean isSelected, boolean hasFocus, int row, int column) {
-      if (isSelected) {
-        setForeground(table.getSelectionForeground());
-        setBackground(table.getSelectionBackground());
-      } else {
-        setForeground(table.getForeground());
-        setBackground(UIManager.getColor("Button.background"));
-      }
-      setText((value == null) ? "" : value.toString());
-      return this;
+
+    private void performActionOne() {
+        Book book = books.get(row);
+        System.out.println(book.toString());
+
+        ProfileBook profileBook = new ProfileBook(book);
+        new EditProfileBook(profileBook, this.username, parentFrame).setVisible(true);;
+
+        // PersonalDB.writePersonalBookToCSV(profileBook, "src/data/users/" + this.username + ".csv");
+        // try {
+        //     // SwingUtilities.updateComponentTreeUI((Component) this.parentFrame);
+        //     parentFrame.refresh();
+            
+        // } catch (Exception e) {
+        //     System.out.println("ERROR");
+        //     // TODO: handle exception
+        // }
+
+
+        // Code for Action One
+        System.out.println("Action One performed");
     }
-  }
+
+    private void performActionTwo() {
+        // Code for Action Two
+        System.out.println("Action Two performed");
+    }
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+        if (isSelected) {
+            setForeground(table.getSelectionForeground());
+            setBackground(table.getSelectionBackground());
+        } else {
+            setForeground(table.getForeground());
+            setBackground(UIManager.getColor("Button.background"));
+        }
+        setText((value == null) ? ACTION_ONE_TEXT : value.toString());
+        this.row = row; // Set the row
+        return this;
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        this.row = row; // Set the row
+        return this;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        return state;
+    }
+
+    @Override
+    public boolean isCellEditable(EventObject e) { return true; }
+
+    @Override
+    public boolean shouldSelectCell(EventObject anEvent) { return true; }
+
+    @Override
+    public boolean stopCellEditing() { return true; }
+
+    @Override
+    public void cancelCellEditing() {
+        state = !state; // revert state if cancelled
+    }
+
+    @Override
+    public void addCellEditorListener(CellEditorListener l) { }
+
+    @Override
+    public void removeCellEditorListener(CellEditorListener l) { }
+}

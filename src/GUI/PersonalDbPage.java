@@ -26,9 +26,11 @@ public class PersonalDbPage extends JPanel {
     private int sortColumn = -1;
     private boolean ascending = true;
     private int clickCount = 0;
+    private String username;
 
     public PersonalDbPage(String username) {
         super(new BorderLayout());
+        this.username = username;
 
         ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/users/" + username + ".csv");
         data = toObjectArray(users);
@@ -67,7 +69,7 @@ public class PersonalDbPage extends JPanel {
         // Create a button
         JButton button = new JButton("Click me");
         button.addActionListener(e -> {
-            // Handle button click event here
+            
         });
 
         // Add the button to the panel at the bottom right
@@ -76,6 +78,15 @@ public class PersonalDbPage extends JPanel {
         setSize(700, 400);
         // setLocationRelativeTo(null);
     }
+
+    public void reloadPage() {
+        ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/users/" + username + ".csv");
+        data = toObjectArray(users);
+        model.setDataVector(data, columns);
+        sortTable();
+    }
+    
+
 
     private Object[][] toObjectArray(ArrayList<ProfileBook> users) {
         Object[][] result = new Object[users.size()][11];
