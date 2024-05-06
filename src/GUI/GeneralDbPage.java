@@ -94,6 +94,10 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             }
         });
 
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+        table.setDefaultRenderer(Object.class, renderer);
+
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
