@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -33,9 +31,6 @@ public class LoginPage implements ActionListener{
 	AccountDB account;
 	
 	public LoginPage() {
-		// Locale locale = Locale.US; 
-		// ResourceBundle login = ResourceBundle.getBundle("english", locale);
-		// System.out.println(login.getString("loginPage.register"));
 
 		account = new AccountDB("src/data/Accounts.csv");
 

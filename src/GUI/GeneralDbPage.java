@@ -2,12 +2,8 @@ package GUI;
 
 import javax.security.auth.Refreshable;
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,21 +11,28 @@ import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.EventObject;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.awt.event.MouseEvent;
 
 import classes.Book;
-import classes.ProfileBook;
 import database.GeneralDB;
 import utils.TableCellListener;
 
 
 public class GeneralDbPage extends JPanel implements ActionListener {
-
+    Locale locale = Locale.getDefault();
+    ResourceBundle bundle = ResourceBundle.getBundle("Messages", locale);
     private JTable table;
     private DefaultTableModel model;
-    private String[] columns = {"Title", "Author", "Ratings", "Reviews", "Actions"}; // Updated columns
+    private String[] columns = {
+        bundle.getString("generalDb.title"), 
+        bundle.getString("generalDb.author"), 
+        bundle.getString("generalDb.ratings"), 
+        bundle.getString("generalDb.reviews"), 
+        bundle.getString("generalDb.actions")
+    }; // Updated columns
     private Object[][] data;
     private int sortColumn = -1;
     private boolean ascending = true;
@@ -37,15 +40,14 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     private JTextField searchField;
     private String username;
     private Refreshable parentFrame;
+    private JButton searchButton;
 
 
     public GeneralDbPage(Refreshable parentFrame, String username) {
         super(new BorderLayout());
         this.username = username;
         this.parentFrame = parentFrame;
-
         GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
-
         ArrayList<Book> books = generalDB.readBooksFromCSV();
         data = toObjectArray(books);
 
@@ -89,10 +91,8 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         table.setColumnSelectionAllowed(false);
         table.getTableHeader().setReorderingAllowed(false);
 
-
         table.getColumn("Actions").setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
         table.getColumn("Actions").setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
-
 
         table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
         table.addMouseListener(new MouseAdapter() {
@@ -114,7 +114,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         searchField = new JTextField(20);
-        JButton searchButton = new JButton("Search Here");
+        searchButton = new JButton(bundle.getString("generalDb.search"));
         searchButton.addActionListener(this);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
@@ -147,6 +147,29 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         setSize(700, 400);
     }
 
+    public void reloadPage() {
+        System.out.println("REFRESH GENERAL PAGE");
+        GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
+        ArrayList<Book> books = generalDB.readBooksFromCSV();
+        data = toObjectArray(books);
+    
+        // Retrieve the resource bundle based on the current locale
+        ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
+    
+        // Update column titles with translated values
+        columns[0] = bundle.getString("generalDb.title");
+        columns[1] = bundle.getString("generalDb.author");
+        columns[2] = bundle.getString("generalDb.ratings");
+        columns[3] = bundle.getString("generalDb.reviews");
+        columns[4] = bundle.getString("generalDb.actions");
+    
+        model.setDataVector(data, columns);
+        searchButton.setText(bundle.getString("generalDb.search"));
+
+        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
+    }
+
     public static void openNewWindow(Book book) {
         JFrame frame = new JFrame("New Window");
         frame.setSize(500, 700);
@@ -166,11 +189,6 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             result[i][1] = book.getAuthor();
             result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings";
             result[i][3] = book.getReviewsUsersString();
-            // Creating JButton for each row
-
-
-            // JButton button = new JButton("Action");
-            // button.addActionListener(this);
             result[i][4] = "Add to Favoruite";
         }
         return result;
@@ -225,12 +243,8 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof JButton) {
-            // Handle button clicks here
             JButton button = (JButton) e.getSource();
-            // Find the row of the clicked button
             int row = table.rowAtPoint(button.getLocation());
-            // Perform action based on the row
-            // For example, print the title and author of the book
             System.out.println("Button clicked in row: " + row);
             System.out.println("Title: " + data[row][0] + ", Author: " + data[row][1]);
         } else if (e.getSource() instanceof JButton) {

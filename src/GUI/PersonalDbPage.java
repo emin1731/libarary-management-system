@@ -14,13 +14,29 @@ import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 
 public class PersonalDbPage extends JPanel {
+    Locale locale = Locale.getDefault();
+    ResourceBundle bundle = ResourceBundle.getBundle("Messages", locale);
 
     private JTable table;
     private DefaultTableModel model;
-    private String[] columns = {"Title", "Author", "Ratings", "Reviews", "Status", "Time Spent", "Start Date", "End Date", "User Rating", "User Review"};
+    // private String[] columns = {"Title", "Author", "Ratings", "Reviews", "Status", "Time Spent", "Start Date", "End Date", "User Rating", "User Review"};
+    private String[] columns = {
+        bundle.getString("profilePage.title"), 
+        bundle.getString("profilePage.author"), 
+        bundle.getString("profilePage.ratings"), 
+        bundle.getString("profilePage.reviews"), 
+        bundle.getString("profilePage.status"),
+        bundle.getString("profilePage.timeSpent"),
+        bundle.getString("profilePage.startDate"),
+        bundle.getString("profilePage.endDate"),
+        bundle.getString("profilePage.userRating"),
+        bundle.getString("profilePage.userReview")
+    };
     private Object[][] data;
 
     private int sortColumn = -1;
@@ -66,24 +82,29 @@ public class PersonalDbPage extends JPanel {
             }
         });
 
-        // Create a button
-        JButton button = new JButton("Click me");
-        button.addActionListener(e -> {
-            
-        });
-
-        // Add the button to the panel at the bottom right
-        add(button, BorderLayout.SOUTH);
-
         setSize(700, 400);
-        // setLocationRelativeTo(null);
     }
 
     public void reloadPage() {
+        System.out.println("REFRESH GENERAL PAGE");
         ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/users/" + username + ".csv");
         data = toObjectArray(users);
         model.setDataVector(data, columns);
-        sortTable();
+    
+        ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
+
+        columns[0] = bundle.getString("profilePage.title"); 
+        columns[1] = bundle.getString("profilePage.author"); 
+        columns[2] = bundle.getString("profilePage.ratings"); 
+        columns[3] = bundle.getString("profilePage.reviews"); 
+        columns[4] = bundle.getString("profilePage.status");
+        columns[5] = bundle.getString("profilePage.timeSpent");
+        columns[6] = bundle.getString("profilePage.startDate");
+        columns[7] = bundle.getString("profilePage.endDate");
+        columns[8] = bundle.getString("profilePage.userRating");
+        columns[9] = bundle.getString("profilePage.userReview");
+    
+        model.setDataVector(data, columns);
     }
 
 
