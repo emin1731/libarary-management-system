@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -31,6 +33,10 @@ public class LoginPage implements ActionListener{
 	AccountDB account;
 	
 	public LoginPage() {
+		// Locale locale = Locale.US; 
+		// ResourceBundle login = ResourceBundle.getBundle("english", locale);
+		// System.out.println(login.getString("loginPage.register"));
+
 		account = new AccountDB("src/data/Accounts.csv");
 
 		frame.setSize(300, 175);
@@ -87,14 +93,22 @@ public class LoginPage implements ActionListener{
 
 			try {
 				if (account.loginUser(userID, password)) {
-					// TabbedPane mainPage = new TabbedPane(userID);
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							// Turn off metal's use of bold fonts
-							UIManager.put("swing.boldMetal", Boolean.FALSE);
-							new UserPage(userID).setVisible(true);
-						}
-					});
+					// System.out.println("LOGIN" + userID + password);
+					if (userID.equals("admin") && password.equals("admin")) {
+						// System.out.println("ADMIN");
+						new AdminPage("emin").setVisible(true);;
+						
+					} else if (userID != "admin") {
+						// TabbedPane mainPage = new TabbedPane(userID);
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								// Turn off metal's use of bold fonts
+								UIManager.put("swing.boldMetal", Boolean.FALSE);
+								UserPage userPage =  new UserPage("emin");
+								userPage.setVisible(true);
+							}
+						});
+					}
 					frame.dispose();
 					// System.out.println("SUCCESS");
 				} else {

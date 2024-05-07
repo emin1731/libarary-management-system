@@ -173,6 +173,10 @@ public class GeneralDB {
         }
       }
 
+      public void addReviewToBook(String bookId, Review review) {
+        
+      }
+
 
 
       
