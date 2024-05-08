@@ -91,8 +91,8 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         table.setColumnSelectionAllowed(false);
         table.getTableHeader().setReorderingAllowed(false);
 
-        table.getColumn("Actions").setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
-        table.getColumn("Actions").setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
 
         table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
         table.addMouseListener(new MouseAdapter() {
