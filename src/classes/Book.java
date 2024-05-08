@@ -44,6 +44,8 @@ public class Book implements Serializable, Cloneable{
 
     
 
+    
+
 
     @Override
     public String toString() {
@@ -72,9 +74,38 @@ public class Book implements Serializable, Cloneable{
         return reviews;
     }
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public Book clone() {
+        try {
+            Book clonedBook = (Book) super.clone();
+            // Make a deep copy of ratings
+            clonedBook.ratings = new ArrayList<>(this.ratings);
+            // Make a deep copy of reviews
+            clonedBook.reviews = new ArrayList<>();
+            for (Review review : this.reviews) {
+                clonedBook.reviews.add(new Review(review));
+            }
+            return clonedBook;
+        } catch (CloneNotSupportedException e) {
+            // This should never happen since Book implements Cloneable
+            throw new InternalError(e);
+        }
     }
+
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    public void setRatings(ArrayList<Integer> ratings) {
+        this.ratings = ratings;
+    }
+    public void setReviews(ArrayList<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    
     
     
 }
