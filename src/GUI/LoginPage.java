@@ -42,7 +42,7 @@ public class LoginPage implements ActionListener, ItemListener {
 	JCheckBox showPasswordCheckbox = new JCheckBox("Show Password");
 
 	public LoginPage() {
-		account = new AccountDB("C://Users//ismai//OneDrive//Рабочий стол//ayla pp2 project//team-project-team-54//src//data//Accounts.csv");
+		account = new AccountDB("src/data/Accounts.csv");
 
 		frame.setSize(700, 525);
         frame.setLocationRelativeTo(null);
@@ -122,12 +122,23 @@ public class LoginPage implements ActionListener, ItemListener {
 
 			try {
 				if (account.loginUser(userID, password)) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							UIManager.put("swing.boldMetal", Boolean.FALSE);
-							new TabbedPane(userID).setVisible(true);
-						}
-					});
+					// System.out.println("LOGIN" + userID + password);
+					if (userID.equals("admin") && password.equals("admin")) {
+						// System.out.println("ADMIN");
+						new AdminPage("emin").setVisible(true);;
+						
+					} else if (userID != "admin") {
+						// TabbedPane mainPage = new TabbedPane(userID);
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								// Turn off metal's use of bold fonts
+								UIManager.put("swing.boldMetal", Boolean.FALSE);
+								UserPage userPage =  new UserPage("emin");
+								userPage.setVisible(true);
+							}
+						});
+					}
+
 					frame.dispose();
 				} else {
 					messageLabel.setForeground(Color.red);

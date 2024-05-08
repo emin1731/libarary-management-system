@@ -3,6 +3,8 @@
 *.iml
 
 out/*
+.vscode/
+.VSCodeCounter/
 
 # User-specific stuff
 .idea/**/workspace.xml

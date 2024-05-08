@@ -2,10 +2,6 @@ package GUI;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
 import javax.swing.*;
 
 import database.AccountDB;
@@ -117,7 +113,7 @@ public class RegisterPage implements ActionListener {
 					public void run() {
 						// Turn off metal's use of bold fonts
 						UIManager.put("swing.boldMetal", Boolean.FALSE);
-						new TabbedPane(userID).setVisible(true);
+						new UserPage(userID).setVisible(true);
 					}
 				});
 
@@ -125,7 +121,7 @@ public class RegisterPage implements ActionListener {
 				messageLabel.setForeground(Color.green);
 				messageLabel.setText("Registered");
 
-				new TabbedPane(userID);
+				new UserPage(userID);
 				frame.dispose();
 			}
 			
