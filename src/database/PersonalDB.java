@@ -142,8 +142,46 @@ public class PersonalDB {
       }
     }
 
+    public static void deleteBookDemo(String fileName, String profileBookId) throws IOException {
+      ArrayList<ProfileBook> profileBooks = readPersonalBooksFromCSV(fileName);
+      // ArrayList<ProfileBook> newProfileBooks = new ArrayList<>();
+      Boolean isFound = false;
+
+      for (ProfileBook profileBook : profileBooks) {
+      //   System.out.println(book.toString());
+        if (profileBook.getId().equals(profileBookId)) {
+          // newProfileBooks.add(profileBook);
+          System.out.println("DELETE FOUND -- " + profileBook.getId() + "in " + fileName);
+          isFound = true;
+        }
+    
+      }
+      if (!isFound) {
+        // System.out.println("Not found: " + profileBookId + " in: " + fileName);
+      }
+    }
+
+    public static void deleteBookAcrossAllDatabases(String bookId) throws IOException {
+      // Get all personal database files (assuming *.csv extension)
+      File folder = new File("src/data/users");
+      File[] files = folder.listFiles((dir, name) -> name.endsWith(".csv"));
+  
+      if (files == null) {
+        System.out.println("No personal database files found in data/users folder.");
+        return;
+      }
+  
+      for (File file : files) {
+        String fileName = file.getAbsolutePath();
+        // System.out.println(fileName);
+        deleteBook(fileName, bookId);
+        // deleteBookDemo(fileName, bookId); // Call existing deleteBook for each file
+      }
+    }
+  
+
     public static void main(String[] args) {
-      ArrayList<ProfileBook> profileBooks = readPersonalBooksFromCSV("src\\data\\personal_books.csv");
+      ArrayList<ProfileBook> profileBooks = readPersonalBooksFromCSV("src/data/personal_books.csv");
       for (ProfileBook profileBook : profileBooks) {
           System.out.println(profileBook.toString());
       }

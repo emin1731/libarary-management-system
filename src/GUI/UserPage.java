@@ -44,7 +44,7 @@ public class UserPage extends JFrame implements Refreshable {
 
 
         // General Database Page
-        this.generalDB = new GeneralDbPage(this, username);
+        this.generalDB = new GeneralDbPage(this, username, false);
         tabbedPane.addTab(generalDatabase, icon, generalDB, "Browse the available book library");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
