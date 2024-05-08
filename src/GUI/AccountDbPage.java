@@ -1,5 +1,6 @@
 package GUI;
 
+import javax.security.auth.RefreshFailedException;
 import javax.security.auth.Refreshable;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
@@ -11,20 +12,35 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import classes.Book;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import database.AccountDB;
+import database.GeneralDB;
 
 
 public class AccountDbPage extends JPanel {
+    Locale locale = Locale.getDefault();
+    ResourceBundle bundle = ResourceBundle.getBundle("Messages", locale);
+    private JTable table;
     private DefaultTableModel model;
-    private String[] columns = {"Username", "Password", "Action", "View"};
+    // private String[] columns = {"Username", "Password", "View", "Action"};
+    private String[] columns = {
+        bundle.getString("accountDb.username"), 
+        bundle.getString("accountDb.username"), 
+        bundle.getString("accountDb.username"), 
+        bundle.getString("accountDb.username")
+    }; // Updated columns
     Object[][] data;
     private Refreshable parentFrame;
 
@@ -39,31 +55,23 @@ public class AccountDbPage extends JPanel {
         data = convertHashMapToArray(hashMap);
         model = new DefaultTableModel(data, columns);
 
-        JTable table = new JTable(model);
+        table = new JTable(model);
         table.setSurrendersFocusOnKeystroke(true);
 
 
         // Custom cell renderer for Action column
-        table.getColumnModel().getColumn(2).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
         // Custom cell editor for Action column
-        table.getColumnModel().getColumn(2).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
 
         // Custom cell renderer for View column
-        table.getColumnModel().getColumn(3).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
         // Custom cell editor for View column
-        table.getColumnModel().getColumn(3).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
     }
-
-    // public static void main(String[] args) {
-    //     JFrame frame = new JFrame("Table Example");
-    //     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //     frame.getContentPane().add(new AccountDbPage());
-    //     frame.pack();
-    //     frame.setVisible(true);
-    // }
 
     public static Object[][] convertHashMapToArray(HashMap<String, String> hashMap) {
         Object[][] array = new Object[hashMap.size()][4]; // 4 columns: username, password, action, view
@@ -77,6 +85,39 @@ public class AccountDbPage extends JPanel {
         }
         return array;
     }
+
+    public void reloadPage() {
+        System.out.println("RELOAD IN ACC PAGE");
+        AccountDB accountDB = new AccountDB("src/data/Accounts.csv");
+        HashMap<String, String> hashMap = accountDB.getAllUsers();
+        data = convertHashMapToArray(hashMap);
+        ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
+
+        columns[0] = bundle.getString("accountDb.username");
+        columns[1] = bundle.getString("accountDb.username");
+        columns[2] = bundle.getString("accountDb.username");
+        columns[3] = bundle.getString("accountDb.username");
+
+        model.setDataVector(data, columns);
+        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+
+        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        this.repaint();
+    }
+
+    public void updateTableData() {
+        AccountDB accountDB = new AccountDB("src/data/Accounts.csv");
+        HashMap<String, String> hashMap = accountDB.getAllUsers();
+        data = convertHashMapToArray(hashMap);
+        model.setDataVector(data, columns);
+        // Update table renderers and editors if needed
+        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        // ... (similar updates for View column)
+        repaint();
+      }
 
     static class ButtonCellRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
         private JButton button;
@@ -93,9 +134,9 @@ public class AccountDbPage extends JPanel {
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     fireEditingStopped();
-                    System.out.println("Row index: " + row);
+                    // System.out.println("Row index: " + row);
                     if (columnIndex == 2) {
-                        System.out.println("View " + data[row][0]);
+                        // System.out.println("View " + data[row][0]);
                         ;
 
                         JFrame frame = new JFrame((String) data[row][0]);
@@ -138,4 +179,5 @@ public class AccountDbPage extends JPanel {
             return super.stopCellEditing();
         }
     }
+
 }

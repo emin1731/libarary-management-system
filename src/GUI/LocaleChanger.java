@@ -49,7 +49,8 @@ public class LocaleChanger extends JComponent {
         try {
             parentFrame.refresh();
         } catch (Exception e) {
-            System.err.println("Error while refreshing UserPage in LocaleChanger");
+            // e.printStackTrace();
+            System.err.println("Error while refreshing in LocaleChanger");
         }
     }
 

@@ -4,6 +4,9 @@ import javax.security.auth.Refreshable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +20,7 @@ import java.util.ResourceBundle;
 import java.awt.event.MouseEvent;
 
 import classes.Book;
+import classes.ProfileBook;
 import database.GeneralDB;
 import utils.TableCellListener;
 
@@ -208,7 +212,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     }
 
     public void reloadPage() {
-        System.out.println("REFRESH GENERAL PAGE");
+        // System.out.println("REFRESH GENERAL PAGE");
         GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
         ArrayList<Book> books = generalDB.readBooksFromCSV();
         data = toObjectArray(books);
@@ -226,8 +230,10 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         model.setDataVector(data, columns);
         searchButton.setText(bundle.getString("generalDb.search"));
 
-        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
-        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
+        // table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
+        // table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new ButtonCellRendererEditor(books, username, parentFrame));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new ButtonCellRendererEditor(books, username, parentFrame));
     }
 
     public static void openNewWindow(Book book) {
@@ -311,8 +317,79 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             performSearch(searchField.getText());
         }
     }
+    static class ButtonCellRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
+        private JButton button;
+        private Object[][] data;
+        private int row;
+        private ArrayList<Book> books;
+        private String username;
+        private Refreshable parentFrame;
+
+        public ButtonCellRendererEditor(ArrayList<Book> books, String username, Refreshable parentFrame) {
+            this.books = books;
+            this.username = username;
+            this.parentFrame = parentFrame;
+            // this.data = data;
+            // this.columnIndex = columnIndex;
+
+            button = new JButton();
+            button.setOpaque(true);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Book book = books.get(row);
+                    System.out.println(book.toString());
+
+                    ProfileBook profileBook = new ProfileBook(book);
+                    new EditProfileBook(profileBook, username, parentFrame).setVisible(true);;
+                    // fireEditingStopped();
+                    // System.out.println("Row index: " + row);
+                    // if (columnIndex == 2) {
+                    //     // System.out.println("View " + data[row][0]);
+                    //     ;
+
+                    //     JFrame frame = new JFrame((String) data[row][0]);
+                    //     frame.setPreferredSize(new Dimension(700, 400));
+                    //     frame.setLocationRelativeTo(null); // Center the window on the screen
+                    //     frame.getContentPane().add(new PersonalDbPage((String) data[row][0]));
+                    //     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only frame window, not the entire application    
+                    //     frame.pack();
+                    //     frame.setVisible(true);
+
+
+                    // } else if (columnIndex == 3) {
+                    //     System.out.println("View button clicked in row " + row);
+                    // }
+                }
+            });
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            this.row = row;
+            button.setText((value == null) ? "" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.row = row;
+            button.setText((value == null) ? "" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return button.getText();
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            return super.stopCellEditing();
+        }
+    }
 
 }
+
 
 class ClickableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
