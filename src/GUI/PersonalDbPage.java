@@ -1,6 +1,7 @@
 package GUI;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.MouseEvent;
@@ -54,6 +55,52 @@ public class PersonalDbPage extends JPanel {
         model = new DefaultTableModel(data, columns);
         table = new JTable(model);
 
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+        table.setDefaultRenderer(Object.class, renderer);
+
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                Point point = e.getPoint();
+                int row = table.rowAtPoint(point);
+                int column = table.columnAtPoint(point);
+
+                if (row != -1 && column != -1) {
+                    table.clearSelection();
+                    table.setRowSelectionInterval(row, row);
+                    table.setColumnSelectionInterval(column, column);
+                }
+            }
+        });
+
+        Font tableFont = new Font("Arial", Font.PLAIN, 12);
+        Color tableForeground = Color.BLACK;
+        Color tableBackground = Color.WHITE;
+        Color tableHeaderBackground = new Color(0, 102, 204); 
+        Color tableHeaderForeground = Color.WHITE;
+        table.setFont(tableFont);
+        table.setForeground(tableForeground);
+        table.setBackground(tableBackground);
+        table.getTableHeader().setFont(tableFont);
+        table.getTableHeader().setForeground(tableHeaderForeground);
+        table.getTableHeader().setBackground(tableHeaderBackground);
+
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (table.isCellSelected(row, column)) {
+                    c.setBackground(Color.BLUE);
+                    c.setForeground(Color.WHITE);
+                } else {
+                    c.setBackground(Color.WHITE);
+                    c.setForeground(Color.BLACK);
+                }
+                return c;
+            }
+        });
+
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -81,6 +128,21 @@ public class PersonalDbPage extends JPanel {
                 sortTable();
             }
         });
+
+        // Create a button
+        JButton button = new JButton("Click me");
+        button.addActionListener(e -> {
+            // Handle button click event here
+        });
+
+        // Customizing button colors
+        button.setBackground(Color.BLUE); 
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false); 
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // Add the button to the panel at the bottom right
+        add(button, BorderLayout.SOUTH);
 
         setSize(700, 400);
     }
