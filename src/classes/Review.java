@@ -15,6 +15,13 @@ public class Review implements Serializable{
         this.name = name;
         this.comment = comment;
     }
+    // Deep copy constructor
+    public Review(Review other) {
+        this.rating = other.rating;
+        this.name = other.name != null ? new String(other.name) : null; // Create a new String object
+        this.comment = other.comment != null ? new String(other.comment) : null; // Create a new String object
+    }
+
 
     public int getRating() {
         return rating;
