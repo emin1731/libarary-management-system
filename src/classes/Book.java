@@ -31,15 +31,24 @@ public class Book implements Serializable, Cloneable{
         }
         return (Double) sum / this.ratings.size();
     }
+
     public String getReviewsUsersString() {
         if (reviews.isEmpty()) {
             return "No Reviews";
         }
+    
         String res = "";
+        int count = 0;
         for (Review review : reviews) {
-            res += review + " ";
+            if (count < 3) {
+                res += review.getName() + " ";
+                count++;
+            } else {
+                res += "...";
+                break;
+            }
         }
-        return res;
+        return res.trim(); // Remove trailing space if any
     }
 
     
@@ -101,12 +110,22 @@ public class Book implements Serializable, Cloneable{
     public void setRatings(ArrayList<Integer> ratings) {
         this.ratings = ratings;
     }
+
     public void setReviews(ArrayList<Review> reviews) {
         this.reviews = reviews;
     }
+    public void addReview(Review review) {
+        this.reviews.add(review);
+    }
 
-    
-    
+    public Review deleteReviewByUsername(String username) {
+        for (Review review : this.reviews) {
+            if (review.getName().equals(username)) {
+                this.reviews.remove(review);
+            }
+        }
+        return null; // Indicate review not found
+    }
     
 }
 

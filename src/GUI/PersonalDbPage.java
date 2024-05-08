@@ -285,48 +285,42 @@ public class PersonalDbPage extends JPanel {
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     if (!isAdmin) {
-                        // Book book = books.get(row);
-                        // System.out.println(book.toString());
-    
-                        // ProfileBook profileBook = new ProfileBook(book);
-                        // new EditProfileBook(profileBook, username, parentFrame).setVisible(true);
+                        ProfileBook profileBook = profileBooks.get(row);
+                        System.out.println(profileBooks.toString());
+                        try {
+                            PersonalDB.deleteBook("src/data/users/" + username + ".csv", profileBook.getId());
+                        } catch (IOException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+
+                        GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
+
+                        try {
+                            Book newBook;
+                            newBook = generalDB.getBookById(profileBook.getId());
+                            newBook.deleteReviewByUsername(username);
+                            generalDB.updateBook(newBook);
+                        } catch (IOException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                        
+
+                        try {
+                            parentFrame.refresh();
+                        } catch (RefreshFailedException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                        // GeneralDB generalDB = new GeneralDB("emin");
+                        // generalDB.deleteBook();
 
                         System.out.println("USER PRESS DELETE");
                     }
                     else {
-                        System.out.println("USER PRESS DELETE");
-                        // Book book = books.get(row);
-                        // System.out.println(book.toString());
-
-                        // GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
-
-                        // try {
-                        //     PersonalDB.deleteBookAcrossAllDatabases(book.getId());
-                            
-                            
-                            
-                            
-                        // } catch (Exception er) {
-                        //     System.err.println("Error in GeneralDbPage PersonalDB.deleteBookAcrossAllDatabases");
-                        //     // er.printStackTrace();
-                        //     // TODO: handle exception
-                        // }
+                        System.out.println("Admin PRESS DELETE");
                         
-                        // try {
-                        //     generalDB.deleteBook(book.getId());
-                        // } catch (IOException e1) {
-                        //     // TODO Auto-generated catch block
-                        //     e1.printStackTrace();
-                        // }
-                        
-                        // try {
-                        //     parentFrame.refresh();
-                        // } catch (RefreshFailedException e1) {
-                        //     // TODO Auto-generated catch block
-                        //     e1.printStackTrace();
-                        // }
-                        // GeneralDB generalDB = new GeneralDB("emin");
-                        // generalDB.deleteBook();
                     }
                 }
             });

@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import classes.Book;
 import classes.ProfileBook;
+import classes.Review;
 import database.GeneralDB;
 import database.PersonalDB;
 import utils.TableCellListener;
@@ -248,6 +249,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
 
         table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
         table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
+        this.repaint();
     }
 
     public static void openNewWindow(Book book) {
@@ -269,7 +271,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             result[i][1] = book.getAuthor();
             result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings";
             result[i][3] = book.getReviewsUsersString();
-            result[i][4] = this.isAdmin ? "Add to Favoruite" : "Delete";
+            result[i][4] = this.isAdmin ? "Delete" : "Add to Favoruite";
         }
         return result;
     }
@@ -356,7 +358,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
                     if (!isAdmin) {
                         Book book = books.get(row);
                         System.out.println(book.toString());
-    
+                        
                         ProfileBook profileBook = new ProfileBook(book);
                         new EditProfileBook(profileBook, username, parentFrame).setVisible(true);
                     }

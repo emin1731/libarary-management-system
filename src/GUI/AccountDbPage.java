@@ -142,7 +142,7 @@ public class AccountDbPage extends JPanel {
                         JFrame frame = new JFrame((String) data[row][0]);
                         frame.setPreferredSize(new Dimension(700, 400));
                         frame.setLocationRelativeTo(null); // Center the window on the screen
-                        frame.getContentPane().add(new PersonalDbPage((String) data[row][0]));
+                        frame.getContentPane().add(new PersonalDbPage(parentFrame, (String) data[row][0], true));
                         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only frame window, not the entire application    
                         frame.pack();
                         frame.setVisible(true);
