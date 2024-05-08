@@ -120,6 +120,66 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         searchPanel.add(searchButton);
         add(searchPanel, BorderLayout.NORTH);
 
+        Font buttonFont = new Font("Arial", Font.BOLD, 14);
+        Color buttonForeground = Color.WHITE;
+        Color buttonBackground = new Color(0, 102, 204); // Dark blue
+        searchButton.setFont(buttonFont);
+        searchButton.setForeground(buttonForeground);
+        searchButton.setBackground(buttonBackground);
+        
+        Font searchFieldFont = new Font("Arial", Font.PLAIN, 14);
+        Color searchFieldForeground = Color.BLACK;
+        Color searchFieldBackground = Color.WHITE;
+        searchField.setFont(searchFieldFont);
+        searchField.setForeground(searchFieldForeground);
+        searchField.setBackground(searchFieldBackground);
+
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                Point point = e.getPoint();
+                int row = table.rowAtPoint(point);
+                int column = table.columnAtPoint(point);
+
+                if (row != -1 && column != -1) {
+                    table.clearSelection();
+                    table.setRowSelectionInterval(row, row);
+                    table.setColumnSelectionInterval(column, column);
+                }
+            }
+        });
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+        table.setDefaultRenderer(Object.class, renderer);
+
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (table.isCellSelected(row, column)) {
+                    c.setBackground(Color.BLUE);
+                    c.setForeground(Color.WHITE);
+                } else {
+                    c.setBackground(Color.WHITE);
+                    c.setForeground(Color.BLACK);
+                }
+                return c;
+            }
+        });
+
+        Font tableFont = new Font("Arial", Font.PLAIN, 12);
+        Color tableForeground = Color.BLACK;
+        Color tableBackground = Color.WHITE;
+        Color tableHeaderBackground = new Color(0, 102, 204); 
+        Color tableHeaderForeground = Color.WHITE;
+        table.setFont(tableFont);
+        table.setForeground(tableForeground);
+        table.setBackground(tableBackground);
+        table.getTableHeader().setFont(buttonFont);
+        table.getTableHeader().setForeground(tableHeaderForeground);
+        table.getTableHeader().setBackground(tableHeaderBackground);
+
         table.getTableHeader().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 int col = table.columnAtPoint(evt.getPoint());
