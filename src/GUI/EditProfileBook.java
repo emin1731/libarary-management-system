@@ -2,6 +2,8 @@ package GUI;
 
 import javax.security.auth.Refreshable;
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import classes.ProfileBook;
 import database.PersonalDB;
 import java.awt.*;
@@ -27,6 +29,7 @@ public class EditProfileBook extends JFrame {
         setTitle("Profile Book Form");
         // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(9, 2, 10, 10)); // Adjust grid layout based on your needs
+        setPreferredSize(new Dimension(500, 400)); // Set preferred size
 
         // Labels
         titleLabel = new JLabel("Title: " + profileBook.getTitle());
@@ -41,6 +44,16 @@ public class EditProfileBook extends JFrame {
         timeSpentField = new JTextField();
         ratingField = new JTextField();
         reviewField = new JTextField();
+
+        // Set background color and border for text fields
+        Color textFieldColor = new Color(204, 204, 204); 
+        Border textFieldBorder = BorderFactory.createLineBorder(Color.GRAY);
+        timeSpentField.setBackground(textFieldColor);
+        timeSpentField.setBorder(textFieldBorder);
+        ratingField.setBackground(textFieldColor);
+        ratingField.setBorder(textFieldBorder);
+        reviewField.setBackground(textFieldColor);
+        reviewField.setBorder(textFieldBorder);
 
         // Status Combo Box
         statusComboBox = new JComboBox<>(ProfileBook.Status.values());
@@ -74,6 +87,38 @@ public class EditProfileBook extends JFrame {
                 saveProfileBook();
             }
         });
+
+
+        saveButton.setFont(new Font("Arial", Font.BOLD, 14));
+        saveButton.setBackground(new Color(34, 139, 34)); // Forest green
+        saveButton.setForeground(Color.WHITE);
+        saveButton.setFocusPainted(false);
+        saveButton.setBorder(BorderFactory.createRaisedBevelBorder());
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                saveButton.setBackground(new Color(30, 130, 76));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                saveButton.setBackground(new Color(34, 139, 34));
+            }
+        });
+
+        Font labelFont = new Font("Arial", Font.BOLD, 12);
+        Font textFieldFont = new Font("Arial", Font.PLAIN, 12);
+
+        titleLabel.setFont(labelFont);
+        authorLabel.setFont(labelFont);
+        timeSpentLabel.setFont(labelFont);
+        startDateLabel.setFont(labelFont);
+        endDateLabel.setFont(labelFont);
+        ratingLabel.setFont(labelFont);
+        reviewLabel.setFont(labelFont);
+        timeSpentField.setFont(textFieldFont);
+        ratingField.setFont(textFieldFont);
+        reviewField.setFont(textFieldFont);
 
         // Add Save button to the frame
         add(saveButton);
