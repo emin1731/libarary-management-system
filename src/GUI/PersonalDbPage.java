@@ -129,7 +129,6 @@ public class PersonalDbPage extends JPanel {
             }
         });
 
-<<<<<<< HEAD
         // Create a button
         JButton button = new JButton("Click me");
         button.addActionListener(e -> {
@@ -145,8 +144,6 @@ public class PersonalDbPage extends JPanel {
         // Add the button to the panel at the bottom right
         add(button, BorderLayout.SOUTH);
 
-=======
->>>>>>> main
         setSize(700, 400);
     }
 
