@@ -2,9 +2,16 @@ package GUI;
 
 import javax.security.auth.Refreshable;
 import javax.swing.*;
+<<<<<<< HEAD
 import javax.swing.border.Border;
 
+=======
+
+import classes.Book;
+>>>>>>> main
 import classes.ProfileBook;
+import classes.Review;
+import database.GeneralDB;
 import database.PersonalDB;
 import java.awt.*;
 import java.time.LocalDate;
@@ -13,6 +20,7 @@ import java.awt.event.*;
 
 public class EditProfileBook extends JFrame {
     private ProfileBook profileBook;
+    private Book book;
     private JComboBox<ProfileBook.Status> statusComboBox;
     private JLabel titleLabel, authorLabel, timeSpentLabel, startDateLabel, endDateLabel, ratingLabel, reviewLabel;
     private JTextField timeSpentField, ratingField, reviewField;
@@ -21,9 +29,13 @@ public class EditProfileBook extends JFrame {
     private String username;
     Refreshable parentFrame;
 
-    public EditProfileBook(ProfileBook profileBook, String username, Refreshable parentFrame) {
+    public EditProfileBook(Book book, String username, Refreshable parentFrame) {
+        ProfileBook profileBook = new ProfileBook(book);
+
+
         this.username = username;
         this.profileBook = profileBook;
+        this.book = book;
         this.parentFrame = parentFrame;
 
         setTitle("Profile Book Form");
@@ -173,12 +185,29 @@ public class EditProfileBook extends JFrame {
         profileBook.setStatus((ProfileBook.Status) statusComboBox.getSelectedItem());
 
         PersonalDB.writePersonalBookToCSV(profileBook, "src/data/users/" + this.username + ".csv");
+        
+
+        GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
+        
+        Review review = new Review(profileBook.getRating(), username, profileBook.getReview());
+        Book newBook = this.book.clone();
+        newBook.addReview(review);
+        try {
+            generalDB.updateBook(newBook);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            // TODO: handle exception
+        }
+
         try {
             this.parentFrame.refresh();
             
         } catch (Exception e) {
             // TODO: handle exception
         }
+
+
 
         dispose();
     }

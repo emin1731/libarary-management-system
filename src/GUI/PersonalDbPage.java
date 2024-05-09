@@ -1,20 +1,31 @@
 package GUI;
 
+import javax.security.auth.RefreshFailedException;
+import javax.security.auth.Refreshable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
+import classes.Book;
 import classes.ProfileBook;
+import classes.ProfileBook.Status;
+import database.GeneralDB;
 import database.PersonalDB;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EventObject;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -25,6 +36,7 @@ public class PersonalDbPage extends JPanel {
 
     private JTable table;
     private DefaultTableModel model;
+    private Refreshable parentFrame;
     // private String[] columns = {"Title", "Author", "Ratings", "Reviews", "Status", "Time Spent", "Start Date", "End Date", "User Rating", "User Review"};
     private String[] columns = {
         bundle.getString("profilePage.title"), 
@@ -36,7 +48,8 @@ public class PersonalDbPage extends JPanel {
         bundle.getString("profilePage.startDate"),
         bundle.getString("profilePage.endDate"),
         bundle.getString("profilePage.userRating"),
-        bundle.getString("profilePage.userReview")
+        bundle.getString("profilePage.userReview"),
+        bundle.getString("profilePage.action")
     };
     private Object[][] data;
 
@@ -44,10 +57,13 @@ public class PersonalDbPage extends JPanel {
     private boolean ascending = true;
     private int clickCount = 0;
     private String username;
+    private Boolean isAdmin;
 
-    public PersonalDbPage(String username) {
+    public PersonalDbPage(Refreshable parentFrame, String username, Boolean isAdmin) {
         super(new BorderLayout());
         this.username = username;
+        this.parentFrame = parentFrame;
+        this.isAdmin = isAdmin;
 
         ArrayList<ProfileBook> users = PersonalDB.readPersonalBooksFromCSV("src/data/users/" + username + ".csv");
         data = toObjectArray(users);
@@ -129,6 +145,13 @@ public class PersonalDbPage extends JPanel {
             }
         });
 
+        table.setColumnSelectionAllowed(false);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        table.getColumn(bundle.getString("profilePage.action")).setCellRenderer(new ButtonCellRendererEditor(users, username, parentFrame, this.isAdmin));
+        table.getColumn(bundle.getString("profilePage.action")).setCellEditor(new ButtonCellRendererEditor(users, username, parentFrame, this.isAdmin));
+
+
         // Create a button
         JButton button = new JButton("Click me");
         button.addActionListener(e -> {
@@ -165,26 +188,48 @@ public class PersonalDbPage extends JPanel {
         columns[7] = bundle.getString("profilePage.endDate");
         columns[8] = bundle.getString("profilePage.userRating");
         columns[9] = bundle.getString("profilePage.userReview");
+        columns[10] = bundle.getString("profilePage.action");
     
         model.setDataVector(data, columns);
+
+        table.getColumn(bundle.getString("profilePage.action")).setCellRenderer(new ButtonCellRendererEditor(users, username, parentFrame, this.isAdmin));
+        table.getColumn(bundle.getString("profilePage.action")).setCellEditor(new ButtonCellRendererEditor(users, username, parentFrame, this.isAdmin));
     }
 
 
 
     private Object[][] toObjectArray(ArrayList<ProfileBook> users) {
+        ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
+
         Object[][] result = new Object[users.size()][11];
         for (int i = 0; i < users.size(); i++) {
             ProfileBook user = users.get(i);
+            String userStatus = "Undefined";
+            switch (user.getStatus()) {
+                case NOT_STARTED:
+                    userStatus = bundle.getString("profilePage.statusNotStarted");
+                    break;
+                case ONGOING:
+                    userStatus = bundle.getString("profilePage.statusOngoing");
+                    break;
+                case COMPLETED:
+                    userStatus = bundle.getString("profilePage.statusCompleted");
+                    break;
+                default:
+                    System.out.println("Unknown status");
+              }
+
             result[i][0] = user.getTitle();
             result[i][1] = user.getAuthor();
-            result[i][2] = (user.getAverageRating() != -1) ? user.getAverageRating() : "No ratings";
-            result[i][3] = user.getReviewsUsersString();
-            result[i][4] = user.getStatus().name();
+            result[i][2] = (user.getAverageRating() != -1) ? user.getAverageRating() : bundle.getString("profilePage.noRatings");
+            result[i][3] = (!user.getReviewsUsersString().equals("No Reviews")) ? user.getAverageRating() : bundle.getString("profilePage.noReviews");
+            result[i][4] = userStatus;
             result[i][5] = user.getTimeSpent();
             result[i][6] = user.getStartDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
-            result[i][7] = (user.getEndDate() == null) ? "End date: null" : user.getEndDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+            result[i][7] = (user.getEndDate() == null) ? bundle.getString("profilePage.noEndDate") : user.getEndDate().format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
             result[i][8] = user.getRating();
             result[i][9] = user.getReview();
+            result[i][10] = bundle.getString("profilePage.action");
         }
         return result;
     }
@@ -217,16 +262,86 @@ public class PersonalDbPage extends JPanel {
         table.setModel(model);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                JFrame frame = new JFrame("Personal Database");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.add(new PersonalDbPage("emin"));
-                frame.pack();
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-            }
-        });
+    static class ButtonCellRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
+        private JButton button;
+        private Object[][] data;
+        private int row;
+        private ArrayList<ProfileBook> profileBooks;
+        private String username;
+        private Refreshable parentFrame;
+
+        @Override
+        public boolean shouldSelectCell(EventObject anEvent) {
+            return true; // Allow cell selection for button interaction
+        }
+
+        public ButtonCellRendererEditor(ArrayList<ProfileBook> profileBooks, String username, Refreshable parentFrame, Boolean isAdmin) {
+            this.profileBooks = profileBooks;
+            this.username = username;
+            this.parentFrame = parentFrame;
+
+            button = new JButton();
+            button.setOpaque(true);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (!isAdmin) {
+                      ProfileBook profileBook = profileBooks.get(row);
+                      System.out.println(profileBooks.toString());
+                  
+                      // Delete from Personal DB
+                      try {
+                        PersonalDB.deleteBook("src/data/users/" + username + ".csv", profileBook.getId());
+                      } catch (IOException e1) {
+                        e1.printStackTrace();
+                      }
+                  
+                      // Interact with General DB
+                      GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
+                      try {
+                        Book newBook = generalDB.getBookById(profileBook.getId());
+                        newBook.deleteReviewByUsername(username);
+                        generalDB.updateBook(newBook);
+                      } catch (IOException e1) {
+                        e1.printStackTrace();
+                      }
+                  
+                      // Refresh parent frame after all DB operations
+                      try {
+                        parentFrame.refresh();
+                      } catch (RefreshFailedException e1) {
+                        e1.printStackTrace();
+                      }
+                  
+                      System.out.println("USER PRESS DELETE");
+                    } else {
+                      System.out.println("Admin PRESS DELETE");
+                    }
+                  }
+            });
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            this.row = row;
+            button.setText((value == null) ? "" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.row = row;
+            button.setText((value == null) ? "" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return button.getText();
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            return super.stopCellEditing();
+        }
     }
 }

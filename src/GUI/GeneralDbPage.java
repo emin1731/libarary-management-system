@@ -1,9 +1,13 @@
 package GUI;
 
+import javax.security.auth.RefreshFailedException;
 import javax.security.auth.Refreshable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,13 +15,18 @@ import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import classes.Book;
+import classes.ProfileBook;
+import classes.Review;
 import database.GeneralDB;
+import database.PersonalDB;
 import utils.TableCellListener;
 
 
@@ -41,58 +50,70 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     private String username;
     private Refreshable parentFrame;
     private JButton searchButton;
+    private Boolean isAdmin;
 
 
-    public GeneralDbPage(Refreshable parentFrame, String username) {
+    public GeneralDbPage(Refreshable parentFrame, String username, Boolean isAdmin) {
         super(new BorderLayout());
         this.username = username;
         this.parentFrame = parentFrame;
+        this.isAdmin = isAdmin;
         GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
         ArrayList<Book> books = generalDB.readBooksFromCSV();
         data = toObjectArray(books);
 
         model = new DefaultTableModel(data, columns);
         table = new JTable(model) {
-            // @Override
-            // public boolean isCellEditable(int row, int column) {
-            //     return false;
-            // }
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (!isAdmin) {
+                    return column == 4;
+                }
+                else {
+                    return isAdmin;
+                }
+            }
+
         };
-
-        new TableCellListener(table, 0, (row, newValue) -> {
-            System.out.println(books.get(row).toString());
-        
-            Book newBook = books.get(row).clone();
-            newBook.setTitle(newValue);
-            try {
-                generalDB.updateBook(newBook);
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: handle exception
-            }
-        });
-
-        new TableCellListener(table, 1, (row, newValue) -> {
-            System.out.println(books.get(row).toString());
-        
-            Book newBook = books.get(row).clone();
-            newBook.setAuthor(newValue);
-            try {
-                generalDB.updateBook(newBook);
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: handle exception
-            }
-        });
-
+        if (isAdmin) {
+            new TableCellListener(table, 0, (row, newValue) -> {
+                System.out.println(books.get(row).toString());
+            
+                Book newBook = books.get(row).clone();
+                newBook.setTitle(newValue);
+                try {
+                    generalDB.updateBook(newBook);
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // TODO: handle exception
+                }
+            });
+            
+        }
+        if (isAdmin) {
+            new TableCellListener(table, 1, (row, newValue) -> {
+                System.out.println(books.get(row).toString());
+            
+                Book newBook = books.get(row).clone();
+                newBook.setAuthor(newValue);
+                try {
+                    generalDB.updateBook(newBook);
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // TODO: handle exception
+                }
+            });
+        }
 
         table.setColumnSelectionAllowed(false);
         table.getTableHeader().setReorderingAllowed(false);
 
-        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
-        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
+        // table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
+        // table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
 
         table.getColumnModel().getColumn(3).setCellRenderer(new ClickableCellRenderer());
         table.addMouseListener(new MouseAdapter() {
@@ -208,7 +229,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     }
 
     public void reloadPage() {
-        System.out.println("REFRESH GENERAL PAGE");
+        // System.out.println("REFRESH GENERAL PAGE");
         GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
         ArrayList<Book> books = generalDB.readBooksFromCSV();
         data = toObjectArray(books);
@@ -226,19 +247,13 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         model.setDataVector(data, columns);
         searchButton.setText(bundle.getString("generalDb.search"));
 
-        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
-        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
+        table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
+        this.repaint();
     }
 
     public static void openNewWindow(Book book) {
-        JFrame frame = new JFrame("New Window");
-        frame.setSize(500, 700);
-        JLabel label = new JLabel("Title: " + book.getTitle() + ", Author: " + book.getAuthor());
-        frame.add(label);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        new ReviewsView(book);
     }
 
     public Object[][] toObjectArray(ArrayList<Book> books) {
@@ -249,7 +264,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             result[i][1] = book.getAuthor();
             result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings";
             result[i][3] = book.getReviewsUsersString();
-            result[i][4] = "Add to Favoruite";
+            result[i][4] = this.isAdmin ? "Delete" : "Add to Favoruite";
         }
         return result;
     }
@@ -311,8 +326,92 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             performSearch(searchField.getText());
         }
     }
+    static class ButtonCellRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
+        private JButton button;
+        private Object[][] data;
+        private int row;
+        private ArrayList<Book> books;
+        private String username;
+        private Refreshable parentFrame;
+
+        @Override
+        public boolean shouldSelectCell(EventObject anEvent) {
+            return true; // Allow cell selection for button interaction
+        }
+
+        public ButtonCellRendererEditor(ArrayList<Book> books, String username, Refreshable parentFrame, Boolean isAdmin) {
+            this.books = books;
+            this.username = username;
+            this.parentFrame = parentFrame;
+
+            button = new JButton();
+            button.setOpaque(true);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (!isAdmin) {
+                        Book book = books.get(row);
+                        System.out.println(book.toString());
+                        
+                        ProfileBook profileBook = new ProfileBook(book);
+                        EditProfileBook editProfileBook = new EditProfileBook(profileBook, username, parentFrame);
+                        editProfileBook.setVisible(true);
+
+                        if (editProfileBook.isActive()) {
+                            System.out.println("editProfileBook is Active ");
+                        }
+                    }
+                    else {
+                        Book book = books.get(row);
+                        System.out.println(book.toString());
+
+                        GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
+
+                        try {
+                            PersonalDB.deleteBookAcrossAllDatabases(book.getId());
+                        } catch (Exception er) {
+                            System.err.println("Error in GeneralDbPage PersonalDB.deleteBookAcrossAllDatabases");
+                        }
+                        
+                        try {
+                            generalDB.deleteBook(book.getId());
+
+                            parentFrame.refresh();
+                        } catch (Exception e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            this.row = row;
+            button.setText((value == null) ? "" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.row = row;
+            button.setText((value == null) ? "" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return button.getText();
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            return super.stopCellEditing();
+        }
+    }
 
 }
+
 
 class ClickableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
