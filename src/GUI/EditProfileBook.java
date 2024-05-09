@@ -2,13 +2,9 @@ package GUI;
 
 import javax.security.auth.Refreshable;
 import javax.swing.*;
-<<<<<<< HEAD
 import javax.swing.border.Border;
 
-=======
-
 import classes.Book;
->>>>>>> main
 import classes.ProfileBook;
 import classes.Review;
 import database.GeneralDB;
