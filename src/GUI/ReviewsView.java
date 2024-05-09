@@ -7,6 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 
+
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ public class ReviewsView extends JFrame {
     public ReviewsView(Book book) {
         this.setTitle("Book Review");
         this.setPreferredSize(new Dimension(500, 400));
+
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -59,6 +61,7 @@ public class ReviewsView extends JFrame {
             panel.add(reviewLabel, gbc);
             gbc.gridy++;
         }
+
 
         this.add(panel);
         this.pack();
