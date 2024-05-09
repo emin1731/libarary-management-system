@@ -3,6 +3,7 @@ package classes;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Book
@@ -119,9 +120,12 @@ public class Book implements Serializable, Cloneable{
     }
 
     public Review deleteReviewByUsername(String username) {
-        for (Review review : this.reviews) {
+        Iterator<Review> reviewIterator = reviews.iterator();
+        while (reviewIterator.hasNext()) {
+            Review review = reviewIterator.next();
             if (review.getName().equals(username)) {
-                this.reviews.remove(review);
+                reviewIterator.remove(); // Use iterator's remove method
+                return review; // Return the removed review (optional)
             }
         }
         return null; // Indicate review not found

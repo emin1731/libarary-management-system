@@ -137,12 +137,7 @@ public class EditProfileBook extends JFrame {
         profileBook.setStatus((ProfileBook.Status) statusComboBox.getSelectedItem());
 
         PersonalDB.writePersonalBookToCSV(profileBook, "src/data/users/" + this.username + ".csv");
-        try {
-            this.parentFrame.refresh();
-            
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        
 
         GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
         
@@ -154,6 +149,13 @@ public class EditProfileBook extends JFrame {
             
         } catch (Exception e) {
             e.printStackTrace();
+            // TODO: handle exception
+        }
+
+        try {
+            this.parentFrame.refresh();
+            
+        } catch (Exception e) {
             // TODO: handle exception
         }
 

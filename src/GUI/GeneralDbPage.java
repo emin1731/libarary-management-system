@@ -253,14 +253,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     }
 
     public static void openNewWindow(Book book) {
-        JFrame frame = new JFrame("New Window");
-        frame.setSize(500, 700);
-        JLabel label = new JLabel("Title: " + book.getTitle() + ", Author: " + book.getAuthor());
-        frame.add(label);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        new ReviewsView(book);
     }
 
     public Object[][] toObjectArray(ArrayList<Book> books) {
@@ -360,7 +353,12 @@ public class GeneralDbPage extends JPanel implements ActionListener {
                         System.out.println(book.toString());
                         
                         ProfileBook profileBook = new ProfileBook(book);
-                        new EditProfileBook(profileBook, username, parentFrame).setVisible(true);
+                        EditProfileBook editProfileBook = new EditProfileBook(profileBook, username, parentFrame);
+                        editProfileBook.setVisible(true);
+
+                        if (editProfileBook.isActive()) {
+                            System.out.println("editProfileBook is Active ");
+                        }
                     }
                     else {
                         Book book = books.get(row);
@@ -370,31 +368,18 @@ public class GeneralDbPage extends JPanel implements ActionListener {
 
                         try {
                             PersonalDB.deleteBookAcrossAllDatabases(book.getId());
-                            
-                            
-                            
-                            
                         } catch (Exception er) {
                             System.err.println("Error in GeneralDbPage PersonalDB.deleteBookAcrossAllDatabases");
-                            // er.printStackTrace();
-                            // TODO: handle exception
                         }
                         
                         try {
                             generalDB.deleteBook(book.getId());
-                        } catch (IOException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
-                        
-                        try {
+
                             parentFrame.refresh();
-                        } catch (RefreshFailedException e1) {
+                        } catch (Exception e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
-                        // GeneralDB generalDB = new GeneralDB("emin");
-                        // generalDB.deleteBook();
                     }
                 }
             });

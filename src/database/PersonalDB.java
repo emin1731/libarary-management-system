@@ -23,8 +23,7 @@ public class PersonalDB {
   public static void createNewPersonalDB(String filename) {
     try (FileWriter writer = new FileWriter(filename)) {
         // Write header row
-        writer.append("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date,End Date,User Rating,User Review");
-        writer.append("\n");
+        writer.append("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date,End Date,User Rating,User Review\n");
 
 
         writer.flush();
@@ -37,10 +36,11 @@ public class PersonalDB {
           BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
         // Write header line on first write
         if (new File(fileName).length() == 0) {
-            writer.write("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date, End Date, User Rating, User Review\n");
+            writer.write("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date,End Date,User Rating,User Review\n");
         }
 
         StringBuilder csvLine = new StringBuilder();
+
         csvLine.append(profileBook.getId()).append(",");
         csvLine.append(profileBook.getTitle()).append(",");
         csvLine.append(profileBook.getAuthor()).append(",");
@@ -110,7 +110,7 @@ public class PersonalDB {
       }
       try (FileOutputStream outputStream = new FileOutputStream(fileName);
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-      writer.write("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date, End Date, User Rating, User Review\n");
+      writer.write("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date,End Date,User Rating,User Review\n");
       for (ProfileBook profileBook : profileBooks) {
         writePersonalBookToCSV(profileBook, fileName); // Assuming writeBookToCSV handles writing a book object to a line
       }
@@ -134,7 +134,7 @@ public class PersonalDB {
       // Rewrite the CSV file excluding the deleted book
       try (FileOutputStream outputStream = new FileOutputStream(fileName);
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-      writer.write("Id,Title,Author,Ratings,Reviews\n");
+      writer.write("Id,Title,Author,Ratings,Reviews,Status,Time Spent,Start Date,End Date,User Rating,User Review\n");
       for (ProfileBook profileBook : newProfileBooks) {
         writePersonalBookToCSV(profileBook, fileName); // Assuming writeBookToCSV handles writing a book object to a line
       }
@@ -161,21 +161,62 @@ public class PersonalDB {
       }
     }
 
+    // public static void deleteBookAcrossAllDatabases(String bookId) throws IOException {
+    //   // Get all personal database files (assuming *.csv extension)
+    //   File folder = new File("src/data/users");
+    //   File[] files = folder.listFiles((dir, name) -> name.endsWith(".csv"));
+  
+    //   if (files == null) {
+    //     System.out.println("No personal database files found in data/users folder.");
+    //     return;
+    //   }
+  
+    //   for (File file : files) {
+    //     String fileName = file.getAbsolutePath();
+    //     // System.out.println(fileName);
+    //     deleteBook(fileName, bookId);
+    //     // deleteBookDemo(fileName, bookId); // Call existing deleteBook for each file
+    //   }
+    // }
     public static void deleteBookAcrossAllDatabases(String bookId) throws IOException {
       // Get all personal database files (assuming *.csv extension)
       File folder = new File("src/data/users");
       File[] files = folder.listFiles((dir, name) -> name.endsWith(".csv"));
-  
+    
       if (files == null) {
         System.out.println("No personal database files found in data/users folder.");
         return;
       }
-  
+    
       for (File file : files) {
         String fileName = file.getAbsolutePath();
-        // System.out.println(fileName);
-        deleteBook(fileName, bookId);
-        // deleteBookDemo(fileName, bookId); // Call existing deleteBook for each file
+    
+        // Read all lines, including the header
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        String headerLine = reader.readLine(); // Read and store the header
+        // ArrayList<ProfileBook> profileBooks = readPersonalBooksFromCSV(reader); // Read remaining lines
+        ArrayList<ProfileBook> profileBooks = readPersonalBooksFromCSV(fileName);
+    
+        reader.close();
+    
+        // Filter books and rewrite the file
+        ArrayList<ProfileBook> newProfileBooks = new ArrayList<>();
+        for (ProfileBook profileBook : profileBooks) {
+          if (!profileBook.getId().equals(bookId)) {
+            newProfileBooks.add(profileBook);
+          }
+        }
+    
+        try (FileOutputStream outputStream = new FileOutputStream(fileName);
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+          // Write the header back
+          writer.write(headerLine + "\n");
+    
+          for (ProfileBook profileBook : newProfileBooks) {
+            writePersonalBookToCSV(profileBook, fileName); // Write data lines
+          }
+          writer.flush();
+        }
       }
     }
   
