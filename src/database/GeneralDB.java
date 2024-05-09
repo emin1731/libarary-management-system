@@ -173,12 +173,19 @@ public class GeneralDB {
         }
       }
 
-      public void addReviewToBook(String bookId, Review review) {
-        
-      }
+      public Book getBookById(String bookId) throws IOException {
+        ArrayList<Book> books = readBooksFromCSV();
+    
+        for (Book book : books) {
+            if (book.getId().equals(bookId)) {
+                return book;
+            }
+        }
+    
+        return null; // Indicate book not found
+    }
 
-
-
+      
       
 }
     

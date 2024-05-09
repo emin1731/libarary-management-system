@@ -27,8 +27,6 @@ import exceptions.UserNotFoundException;
 public class LoginPage implements ActionListener, ItemListener {
 	
 	JFrame frame = new JFrame("Login");
-	/*JButton loginButton = new JButton("Login");
-	JButton registerButton = new JButton("Register");*/
 	RoundedButton loginButton = new RoundedButton("Login"); 
     RoundedButton registerButton = new RoundedButton("Register"); 
 	JTextField userIDField = new JTextField(20);
@@ -133,7 +131,7 @@ public class LoginPage implements ActionListener, ItemListener {
 							public void run() {
 								// Turn off metal's use of bold fonts
 								UIManager.put("swing.boldMetal", Boolean.FALSE);
-								UserPage userPage =  new UserPage("emin");
+								UserPage userPage =  new UserPage(userID);
 								userPage.setVisible(true);
 							}
 						});

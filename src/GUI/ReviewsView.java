@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
+
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -17,7 +19,8 @@ import classes.Review;
 public class ReviewsView extends JFrame {
     public ReviewsView(Book book) {
         this.setTitle("Book Review");
-        this.setPreferredSize(new Dimension(500, 200));
+        this.setPreferredSize(new Dimension(500, 400));
+
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -46,9 +49,19 @@ public class ReviewsView extends JFrame {
         panel.add(ratingsLabel, gbc);
 
         gbc.gridy++;
-        JLabel reviewsLabel = new JLabel("Reviews: " + book.getReviewsUsersString());
-        reviewsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        JLabel reviewsLabel = new JLabel("Reviews:");
+        reviewsLabel.setFont(new Font("Arial", Font.BOLD, 14));
         panel.add(reviewsLabel, gbc);
+
+        ArrayList<Review> reviews = book.getReviews();
+        gbc.gridy++;
+        for (Review review : reviews) {
+            JLabel reviewLabel = new JLabel("Username: " + review.getName() + ", Rating: " + review.getRating() + ", Comment: " + review.getComment());
+            reviewLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            panel.add(reviewLabel, gbc);
+            gbc.gridy++;
+        }
+
 
         this.add(panel);
         this.pack();

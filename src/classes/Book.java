@@ -3,6 +3,7 @@ package classes;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Book
@@ -31,15 +32,24 @@ public class Book implements Serializable, Cloneable{
         }
         return (Double) sum / this.ratings.size();
     }
+
     public String getReviewsUsersString() {
         if (reviews.isEmpty()) {
             return "No Reviews";
         }
+    
         String res = "";
+        int count = 0;
         for (Review review : reviews) {
-            res += review + " ";
+            if (count < 3) {
+                res += review.getName() + " ";
+                count++;
+            } else {
+                res += "...";
+                break;
+            }
         }
-        return res;
+        return res.trim(); // Remove trailing space if any
     }
 
     
@@ -101,12 +111,25 @@ public class Book implements Serializable, Cloneable{
     public void setRatings(ArrayList<Integer> ratings) {
         this.ratings = ratings;
     }
+
     public void setReviews(ArrayList<Review> reviews) {
         this.reviews = reviews;
     }
+    public void addReview(Review review) {
+        this.reviews.add(review);
+    }
 
-    
-    
+    public Review deleteReviewByUsername(String username) {
+        Iterator<Review> reviewIterator = reviews.iterator();
+        while (reviewIterator.hasNext()) {
+            Review review = reviewIterator.next();
+            if (review.getName().equals(username)) {
+                reviewIterator.remove(); // Use iterator's remove method
+                return review; // Return the removed review (optional)
+            }
+        }
+        return null; // Indicate review not found
+    }
     
 }
 
