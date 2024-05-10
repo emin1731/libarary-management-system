@@ -72,7 +72,7 @@ public class LoginPage implements ActionListener, ItemListener, Refreshable {
 		loginLabel.setBounds(100, 50, 200, 35);
         loginLabel.setFont(new Font("Arial", Font.BOLD, 35));
 		welcomeLabel.setBounds(425,50,250,35); 
-		welcomeLabel.setFont(new Font("Georgia", Font.BOLD, 35));
+		welcomeLabel.setFont(new Font("Times New Roman", Font.BOLD, 35));
         panel.add(loginLabel);
 		panel.add(welcomeLabel);
 
