@@ -6,7 +6,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
-
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -16,9 +16,10 @@ import javax.swing.JPanel;
 import classes.Book;
 import classes.Review;
 
-public class ReviewsView extends JFrame {
-    public ReviewsView(Book book) {
-        this.setTitle("Book Review");
+public class ReviewsPage extends JFrame {
+    public ReviewsPage(Book book) {
+        ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
+        this.setTitle(bundle.getString("reviewsPage.title"));
         this.setPreferredSize(new Dimension(500, 400));
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -34,29 +35,29 @@ public class ReviewsView extends JFrame {
         gbc.insets.top = 5;
         gbc.insets.bottom = 5;
 
-        JLabel titleLabel = new JLabel("Title: " + book.getTitle());
+        JLabel titleLabel = new JLabel(bundle.getString("reviewsPage.bookTitle") + ": " + book.getTitle());
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         panel.add(titleLabel, gbc);
 
         gbc.gridy++;
-        JLabel authorLabel = new JLabel("Author: " + book.getAuthor());
+        JLabel authorLabel = new JLabel(bundle.getString("reviewsPage.bookAuthor") + ": " + ((!book.getAuthor().equals("Unknown")) ? book.getAuthor() : bundle.getString("generalDb.unknown")));
         authorLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         panel.add(authorLabel, gbc);
 
         gbc.gridy++;
-        JLabel ratingsLabel = new JLabel("Average Rating: " + book.getAverageRating());
+        JLabel ratingsLabel = new JLabel(bundle.getString("reviewsPage.averageRating") + ": " + ((book.getAverageRating() != -1) ? book.getAverageRating() : bundle.getString("generalDb.noRatings")));
         ratingsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         panel.add(ratingsLabel, gbc);
 
         gbc.gridy++;
-        JLabel reviewsLabel = new JLabel("Reviews:");
+        JLabel reviewsLabel = new JLabel(bundle.getString("reviewsPage.Reviews") + ": ");
         reviewsLabel.setFont(new Font("Arial", Font.BOLD, 14));
         panel.add(reviewsLabel, gbc);
 
         ArrayList<Review> reviews = book.getReviews();
         gbc.gridy++;
         for (Review review : reviews) {
-            JLabel reviewLabel = new JLabel("Username: " + review.getName() + ", Rating: " + review.getRating() + ", Comment: " + review.getComment());
+            JLabel reviewLabel = new JLabel(bundle.getString("reviewsPage.reviewUsername") + ": " + review.getName() + ", " + bundle.getString("reviewsPage.reviewRating") + ": " + review.getRating() + ", " + bundle.getString("reviewsPage.reviewDescription") + ": " + review.getComment());
             reviewLabel.setFont(new Font("Arial", Font.PLAIN, 14));
             panel.add(reviewLabel, gbc);
             gbc.gridy++;
