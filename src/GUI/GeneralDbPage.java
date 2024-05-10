@@ -1,6 +1,6 @@
-// This class represents a page displaying general database information for books and allows for sorting, searching, and interaction with book entries.
 package GUI;
 
+import javax.security.auth.RefreshFailedException;
 import javax.security.auth.Refreshable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -21,8 +21,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+
 import classes.Book;
 import classes.ProfileBook;
+import classes.Review;
 import database.GeneralDB;
 import database.PersonalDB;
 import utils.TableCellListener;
@@ -87,6 +90,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
                     
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // TODO: handle exception
                 }
             });
             
@@ -102,7 +106,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
                     
                 } catch (Exception e) {
                     e.printStackTrace();
-                    
+                    // TODO: handle exception
                 }
             });
         }
@@ -110,7 +114,8 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         table.setColumnSelectionAllowed(false);
         table.getTableHeader().setReorderingAllowed(false);
 
-        
+        // table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new TableToggleButton(books, this.username, this.parentFrame));
+        // table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new TableToggleButton(books, this.username, this.parentFrame));
         table.getColumn(bundle.getString("generalDb.actions")).setCellRenderer(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
         table.getColumn(bundle.getString("generalDb.actions")).setCellEditor(new ButtonCellRendererEditor(books, username, parentFrame, this.isAdmin));
 
@@ -232,13 +237,15 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     }
 
     public void reloadPage() {
-        
+        // System.out.println("REFRESH GENERAL PAGE");
         GeneralDB generalDB = new GeneralDB("src/data/GeneralDatabase.csv");
         ArrayList<Book> books = generalDB.readBooksFromCSV();
         data = toObjectArray(books);
     
+        // Retrieve the resource bundle based on the current locale
         ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
     
+        // Update column titles with translated values
         columns[0] = bundle.getString("generalDb.title");
         columns[1] = bundle.getString("generalDb.author");
         columns[2] = bundle.getString("generalDb.ratings");
@@ -308,6 +315,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             }
         }
 
+        // Convert the filtered data to an array
         Object[][] filteredArray = new Object[filteredData.size()][];
         for (int i = 0; i < filteredData.size(); i++) {
             filteredArray[i] = filteredData.get(i);
@@ -321,22 +329,30 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof JButton) {
             JButton button = (JButton) e.getSource();
-            int row = table.rowAtPoint(button.getLocation());
-            System.out.println("Button clicked in row: " + row);
-            System.out.println("Title: " + data[row][0] + ", Author: " + data[row][1]);
-        } else if (e.getSource() instanceof JButton) {
-            performSearch(searchField.getText());
+            if (button.getText().equals(bundle.getString("generalDb.search"))) {
+                performSearch(searchField.getText());
+            }
         }
     }
+
     static class ButtonCellRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
         private JButton button;
+        private Object[][] data;
         private int row;
+        private ArrayList<Book> books;
+        private String username;
+        private Refreshable parentFrame;
+
         @Override
         public boolean shouldSelectCell(EventObject anEvent) {
             return true; // Allow cell selection for button interaction
         }
 
         public ButtonCellRendererEditor(ArrayList<Book> books, String username, Refreshable parentFrame, Boolean isAdmin) {
+            this.books = books;
+            this.username = username;
+            this.parentFrame = parentFrame;
+
             button = new JButton();
             button.setOpaque(true);
             button.addActionListener(new ActionListener() {
@@ -370,7 +386,7 @@ public class GeneralDbPage extends JPanel implements ActionListener {
 
                             parentFrame.refresh();
                         } catch (Exception e1) {
-                            
+                            // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
                     }
