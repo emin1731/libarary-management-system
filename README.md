@@ -16,6 +16,7 @@ The user interacts with these classes through an intuitive GUI. The bookshelf di
 1. When entering the `LoginPage`, there are two options available: to login with an already existing account or create one using **"registration"**.
 2. After entering, there are two libraries available, General and Personal.
 3. CRUD operations are available for the Personal Database, and for the General Database, only if the user entered as Admin.
+4. To 
 4. For the General Database, there is sorting available to make the browsing more comfortable. Sorting is available for **Title** and **Author**. In addition to sorting, there is also a Search bar available for the user. Users can find the desired book by entering either the **Title** or **Author** of the book.
 5. General and Personal libraries are interconnected; in the General Database, on the last right row, there is **'Actions'** which is a tool that connects to the Personal Library. By simply clicking on those buttons, there is a new frame which is like a form that the user needs to fill in to add **'Time Spent'**, **start and end date**, **'Rating'**, **'Review'**, and **'Status'**.
 

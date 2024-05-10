@@ -39,7 +39,7 @@ public class EditProfileBook extends JFrame {
 
         setTitle("Profile Book Form");
         setLayout(new GridLayout(9, 2, 10, 10)); // Adjust grid layout based on your needs
-        setPreferredSize(new Dimension(500, 400)); // Set preferred size
+        setPreferredSize(new Dimension(600, 400)); // Set preferred size
 
         // Labels
         titleLabel = new JLabel("Title: " + profileBook.getTitle());
