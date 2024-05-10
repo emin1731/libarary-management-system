@@ -1,12 +1,18 @@
 package GUI;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import javax.security.auth.RefreshFailedException;
+import javax.security.auth.Refreshable;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,7 +30,7 @@ import javax.swing.border.Border;
 import database.AccountDB;
 import exceptions.UserNotFoundException;
 
-public class LoginPage implements ActionListener, ItemListener {
+public class LoginPage implements ActionListener, ItemListener, Refreshable {
 	
 	JFrame frame = new JFrame("Login");
 	RoundedButton loginButton = new RoundedButton("Login"); 
@@ -46,10 +52,25 @@ public class LoginPage implements ActionListener, ItemListener {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		// Create a LocaleChanger component
+        LocaleChanger localeChanger = new LocaleChanger(this);
+
+		// Create a panel for the tabbed pane and locale changer
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BorderLayout());
+
+        // Add the LocaleChanger to a panel with FlowLayout
+        JPanel localePanel = new JPanel(new FlowLayout(FlowLayout.LEADING)); // Align components to the left
+        localePanel.add(localeChanger);
+
+        // Add the localePanel and tabbed pane to the content panel
+        contentPanel.add(localePanel, BorderLayout.NORTH);
+
+
 		JPanel panel = new JPanel();
-		loginLabel.setBounds(100, 50, 130, 35);
+		loginLabel.setBounds(100, 50, 200, 35);
         loginLabel.setFont(new Font("Arial", Font.BOLD, 35));
-		welcomeLabel.setBounds(425,50,200,35); 
+		welcomeLabel.setBounds(425,50,250,35); 
 		welcomeLabel.setFont(new Font("Georgia", Font.BOLD, 35));
         panel.add(loginLabel);
 		panel.add(welcomeLabel);
@@ -103,12 +124,30 @@ public class LoginPage implements ActionListener, ItemListener {
         imageLabel.setBounds(350, 0, 350, 525);
         panel.add(imageLabel);
 
-        frame.add(panel);
+		contentPanel.add(panel);
+
+        frame.add(contentPanel);
         frame.setVisible(true);
 	}
+
+	@Override
+    public void refresh() {
+		ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
+
+        // Update all labels with new localized strings
+        loginLabel.setText(bundle.getString("loginPage.login"));
+        welcomeLabel.setText(bundle.getString("loginPage.welcome"));
+        userIDLabel.setText(bundle.getString("loginPage.username"));
+        userPasswordLabel.setText(bundle.getString("loginPage.password"));
+        loginButton.setText(bundle.getString("loginPage.login"));
+        registerButton.setText(bundle.getString("loginPage.register"));
+        showPasswordCheckbox.setText(bundle.getString("loginPage.showPassword"));
+        // Update any other message labels as needed
+    }
     
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
 		if(e.getSource()==registerButton) {
 			new RegisterPage();
 			frame.dispose();
@@ -140,11 +179,11 @@ public class LoginPage implements ActionListener, ItemListener {
 					frame.dispose();
 				} else {
 					messageLabel.setForeground(Color.red);
-					messageLabel.setText("Wrong password");
+					messageLabel.setText(bundle.getString("loginPage.wrongPassword"));
 				}
 			} catch (UserNotFoundException er) {
 				messageLabel.setForeground(Color.red);
-				messageLabel.setText("Username not found");
+				messageLabel.setText(bundle.getString("loginPage.usernameNotFound"));
 			}
 			
 		}
@@ -164,4 +203,12 @@ public class LoginPage implements ActionListener, ItemListener {
 	public static void main(String[] args) {
         new LoginPage();
     }
+
+	@Override
+	public boolean isCurrent() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'isCurrent'");
+	}
+
+	
 }

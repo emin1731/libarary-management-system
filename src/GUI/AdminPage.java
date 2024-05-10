@@ -92,7 +92,7 @@ public class AdminPage extends JFrame implements Refreshable {
         });
     }
     public void refresh() {
-        // accountDbPage.reloadPage();
+        accountDbPage.reloadPage();
         // accountDbPage.updateTableData();
 
         generalDB.reloadPage();
