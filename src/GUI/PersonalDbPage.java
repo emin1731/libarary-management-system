@@ -152,20 +152,20 @@ public class PersonalDbPage extends JPanel {
         table.getColumn(bundle.getString("profilePage.action")).setCellEditor(new ButtonCellRendererEditor(users, username, parentFrame, this.isAdmin));
 
 
-        // Create a button
-        JButton button = new JButton("Click me");
-        button.addActionListener(e -> {
-            // Handle button click event here
-        });
+        // // Create a button
+        // JButton button = new JButton("Click me");
+        // button.addActionListener(e -> {
+        //     // Handle button click event here
+        // });
 
-        // Customizing button colors
-        button.setBackground(Color.BLUE); 
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false); 
-        button.setFont(new Font("Arial", Font.BOLD, 14));
+        // // Customizing button colors
+        // button.setBackground(Color.BLUE); 
+        // button.setForeground(Color.WHITE);
+        // button.setFocusPainted(false); 
+        // button.setFont(new Font("Arial", Font.BOLD, 14));
 
-        // Add the button to the panel at the bottom right
-        add(button, BorderLayout.SOUTH);
+        // // Add the button to the panel at the bottom right
+        // add(button, BorderLayout.SOUTH);
 
         setSize(700, 400);
     }
@@ -220,7 +220,7 @@ public class PersonalDbPage extends JPanel {
               }
 
             result[i][0] = user.getTitle();
-            result[i][1] = user.getAuthor();
+            result[i][1] = (!user.getAuthor().equals("Unknown")) ? user.getAuthor() : bundle.getString("profilePage.unknown");
             result[i][2] = (user.getAverageRating() != -1) ? user.getAverageRating() : bundle.getString("profilePage.noRatings");
             result[i][3] = (!user.getReviewsUsersString().equals("No Reviews")) ? user.getAverageRating() : bundle.getString("profilePage.noReviews");
             result[i][4] = userStatus;

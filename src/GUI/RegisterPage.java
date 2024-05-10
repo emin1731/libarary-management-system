@@ -10,8 +10,6 @@ import exceptions.UserNotFoundException;
 
 public class RegisterPage implements ActionListener {
 	JFrame frame = new JFrame("Register");
-	/*JButton registerButton = new JButton("Register");
-	JButton loginButton = new JButton("Login");*/
 	RoundedButton loginButton = new RoundedButton("Login"); 
     RoundedButton registerButton = new RoundedButton("Register"); 
 	JTextField userIDField = new JTextField(20);

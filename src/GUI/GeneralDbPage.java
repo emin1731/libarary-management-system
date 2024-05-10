@@ -257,13 +257,14 @@ public class GeneralDbPage extends JPanel implements ActionListener {
     }
 
     public Object[][] toObjectArray(ArrayList<Book> books) {
+        ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
         Object[][] result = new Object[books.size()][5]; // Updated array size
         for (int i = 0; i < books.size(); i++) {
             Book book = books.get(i);
             result[i][0] = book.getTitle();
             result[i][1] = book.getAuthor();
             result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : bundle.getString("generalDb.noRatings");
-            result[i][3] = book.getReviewsUsersString();
+            result[i][3] = (!book.getReviewsUsersString().equals("No Reviews")) ? book.getReviewsUsersString() : bundle.getString("generalDb.noReviews");
             result[i][4] = this.isAdmin ? bundle.getString("generalDb.delete") : bundle.getString("generalDb.addToFavoruite");
         }
         return result;
