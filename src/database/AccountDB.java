@@ -1,3 +1,4 @@
+// AccountDB manages user account information, offering functionalities like user registration, login, and data retrieval from a CSV file.
 package database;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,7 +15,6 @@ import exceptions.UserNotFoundException;
 
 public class AccountDB {
     private String filepath;
-
 
     public AccountDB(String filepath) {
         this.filepath = filepath;
@@ -87,17 +87,4 @@ public class AccountDB {
           }
           return users;
     }
-    // public static void main(String[] args) {
-    //     AccountDB acc = new AccountDB("src/data/Accounts.csv");
-    //     HashMap<String, String> data = acc.getAllUsers();
-    //     try {
-    //         if (acc.loginUser("emin", "123")) {
-    //             System.out.println("LOGIN");
-    //         }
-    //     } catch (Exception e) {
-    //         System.out.println("ERROR");
-    //         // TODO: handle exception
-    //     }
-    // }
 }
-

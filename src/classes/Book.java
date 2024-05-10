@@ -1,4 +1,6 @@
-
+/**
+ * The ⁠ Book ⁠ class represents individual book in general database
+ */
 package classes;
 
 import java.io.Serializable;
@@ -8,7 +10,7 @@ import java.util.Iterator;
 /**
  * Book
  */
-public class Book implements Serializable, Cloneable{
+public class Book implements Serializable, Cloneable {
     protected String id;
     protected String title;
     protected String author;
@@ -130,6 +132,4 @@ public class Book implements Serializable, Cloneable{
         }
         return null; // Indicate review not found
     }
-    
 }
-

@@ -1,3 +1,4 @@
+// SerializationUtils provides methods for converting objects to and from Strings using Base64 encoding, facilitating storage in CSV files or transmission over networks.
 package utils;
 
 import java.io.ByteArrayInputStream;

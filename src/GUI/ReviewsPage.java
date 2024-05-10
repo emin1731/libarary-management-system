@@ -1,3 +1,4 @@
+// ReviewsPage class represents a graphical user interface for displaying reviews of a book, presenting information such as book title, author, average rating, and individual user reviews, with support for localization.
 package GUI;
 
 import java.awt.Color;

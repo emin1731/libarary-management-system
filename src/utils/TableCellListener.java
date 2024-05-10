@@ -1,3 +1,4 @@
+// TableCellListener listens for changes in specific cells of a JTable and triggers a callback function, provided as a BiConsumer, with the updated cell's row index and value.
 package utils;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
