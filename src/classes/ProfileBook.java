@@ -2,6 +2,7 @@ package classes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import exceptions.InvalidRatingException;
 
@@ -52,7 +53,15 @@ public class ProfileBook extends Book{
         this.review = review;
     }
 
-    
+    // Clone method for deep copy
+    public ProfileBook clone() {
+        ArrayList<Integer> ratingsCopy = new ArrayList<>(ratings);
+        ArrayList<Review> reviewsCopy = new ArrayList<>(reviews);
+        LocalDate startDateCopy = startDate != null ? LocalDate.of(startDate.getYear(), startDate.getMonthValue(), startDate.getDayOfMonth()) : null;
+        LocalDate endDateCopy = endDate != null ? LocalDate.of(endDate.getYear(), endDate.getMonthValue(), endDate.getDayOfMonth()) : null;
+
+        return new ProfileBook(this.id, title, author, ratingsCopy, reviewsCopy,status, timeSpent, startDateCopy, endDateCopy, rating, review);
+}
 
     @Override
     public String toString() {
@@ -113,10 +122,5 @@ public class ProfileBook extends Book{
     public String getReview() {
         return review;
     }
-    
-
-
-    
-
     
 }

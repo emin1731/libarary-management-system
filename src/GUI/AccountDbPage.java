@@ -36,10 +36,10 @@ public class AccountDbPage extends JPanel {
     private DefaultTableModel model;
     // private String[] columns = {"Username", "Password", "View", "Action"};
     private String[] columns = {
-        bundle.getString("accountDb.username"), 
-        bundle.getString("accountDb.username"), 
-        bundle.getString("accountDb.username"), 
-        bundle.getString("accountDb.username")
+        bundle.getString("profilePage.author"), 
+        bundle.getString("accountDb.password"), 
+        bundle.getString("accountDb.view"), 
+        bundle.getString("accountDb.action")
     }; // Updated columns
     Object[][] data;
     private Refreshable parentFrame;
@@ -60,64 +60,67 @@ public class AccountDbPage extends JPanel {
 
 
         // Custom cell renderer for Action column
-        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.view")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
         // Custom cell editor for Action column
-        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.view")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
 
         // Custom cell renderer for View column
-        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.action")).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
         // Custom cell editor for View column
-        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.action")).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
     }
 
     public static Object[][] convertHashMapToArray(HashMap<String, String> hashMap) {
+        ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
         Object[][] array = new Object[hashMap.size()][4]; // 4 columns: username, password, action, view
         int rowIndex = 0;
         for (Map.Entry<String, String> entry : hashMap.entrySet()) {
             array[rowIndex][0] = entry.getKey(); // Username
             array[rowIndex][1] = entry.getValue(); // Password
-            array[rowIndex][2] = "View"; // Action
-            array[rowIndex][3] = "Delete"; // View
+            array[rowIndex][2] = bundle.getString("accountDb.view");
+            array[rowIndex][3] = bundle.getString("accountDb.delete");
             rowIndex++;
         }
         return array;
     }
 
     public void reloadPage() {
-        System.out.println("RELOAD IN ACC PAGE");
+        // System.out.println("RELOAD IN ACC PAGE");
         AccountDB accountDB = new AccountDB("src/data/Accounts.csv");
         HashMap<String, String> hashMap = accountDB.getAllUsers();
         data = convertHashMapToArray(hashMap);
         ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
 
-        columns[0] = bundle.getString("accountDb.username");
-        columns[1] = bundle.getString("accountDb.username");
-        columns[2] = bundle.getString("accountDb.username");
-        columns[3] = bundle.getString("accountDb.username");
+        columns[0] = bundle.getString("profilePage.author");
+        columns[1] = bundle.getString("accountDb.password");
+        columns[2] = bundle.getString("accountDb.view");
+        columns[3] = bundle.getString("accountDb.action");
 
         model.setDataVector(data, columns);
-        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
-        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.view")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.view")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
 
-        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
-        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.action")).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+        table.getColumn(bundle.getString("accountDb.action")).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
         this.repaint();
     }
 
-    public void updateTableData() {
-        AccountDB accountDB = new AccountDB("src/data/Accounts.csv");
-        HashMap<String, String> hashMap = accountDB.getAllUsers();
-        data = convertHashMapToArray(hashMap);
-        model.setDataVector(data, columns);
-        // Update table renderers and editors if needed
-        table.getColumn(bundle.getString("accountDb.username")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
-        table.getColumn(bundle.getString("accountDb.username")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
-        // ... (similar updates for View column)
-        repaint();
-      }
+    // public void updateTableData() {
+    //     AccountDB accountDB = new AccountDB("src/data/Accounts.csv");
+    //     HashMap<String, String> hashMap = accountDB.getAllUsers();
+    //     data = convertHashMapToArray(hashMap);
+    //     model.setDataVector(data, columns);
+
+    //     table.getColumn(bundle.getString("accountDb.view")).setCellRenderer(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+    //     table.getColumn(bundle.getString("accountDb.view")).setCellEditor(new ButtonCellRendererEditor(table, data, 2, this.parentFrame));
+        
+    //     table.getColumn(bundle.getString("accountDb.action")).setCellRenderer(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+    //     table.getColumn(bundle.getString("accountDb.action")).setCellEditor(new ButtonCellRendererEditor(table, data, 3, this.parentFrame));
+    //     this.repaint();
+    //   }
 
     static class ButtonCellRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
         private JButton button;

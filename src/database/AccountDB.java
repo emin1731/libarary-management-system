@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
+import exceptions.EmptyUsernameOrPasswordException;
+import exceptions.UserAlreadyExistsException;
 import exceptions.UserNotFoundException;
 
 public class AccountDB {
@@ -18,26 +20,38 @@ public class AccountDB {
         this.filepath = filepath;
     }
 
-    public void registerUser(String username, String password) {
-        try (FileOutputStream outputStream = new FileOutputStream(this.filepath, true);
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-            // Write header line on first write
-            if (new File(this.filepath).length() == 0) {
-                writer.write("username,password\n");
+    public void registerUser(String username, String password) throws EmptyUsernameOrPasswordException, UserAlreadyExistsException {
+        try {
+            if (loginUser(username, password)) {
+                throw new UserAlreadyExistsException("User already exists");
             }
+            
+        } catch (UserNotFoundException e1) {
+            try (FileOutputStream outputStream = new FileOutputStream(this.filepath, true);
+                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+                // Write header line on first write
+                if (new File(this.filepath).length() == 0) {
+                    writer.write("username,password\n");
+                }
+        
+                StringBuilder csvLine = new StringBuilder();
+                csvLine.append(username).append(",");
+                csvLine.append(password);
     
-            StringBuilder csvLine = new StringBuilder();
-            csvLine.append(username).append(",");
-            csvLine.append(password);
-
-            writer.write("\n" + csvLine.toString() );
-            writer.flush();
-        } catch (IOException e) {
-            System.err.println("Error writing to CSV file: " + e.getMessage());
+                writer.write("\n" + csvLine.toString() );
+                writer.flush();
+            } catch (IOException e2) {
+                System.err.println("Error writing to CSV file: " + e2.getMessage());
+            }
+            
         }
+
     }
 
-    public boolean loginUser(String username, String password) throws UserNotFoundException{
+    public boolean loginUser(String username, String password) throws UserNotFoundException, EmptyUsernameOrPasswordException {
+        if (username.equals("") || password.equals("")) {
+            throw new EmptyUsernameOrPasswordException("Username or password is empty");
+        }
         HashMap<String,String> users = getAllUsers();
 
         if(users.containsKey(username)) {
