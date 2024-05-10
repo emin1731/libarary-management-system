@@ -1,3 +1,4 @@
+// Represents a form for editing profile book details including time spent, start and end dates, rating, review, and status.
 package GUI;
 
 import javax.security.auth.Refreshable;
@@ -37,7 +38,6 @@ public class EditProfileBook extends JFrame {
         this.parentFrame = parentFrame;
 
         setTitle("Profile Book Form");
-        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(9, 2, 10, 10)); // Adjust grid layout based on your needs
         setPreferredSize(new Dimension(500, 400)); // Set preferred size
 
@@ -168,7 +168,6 @@ public class EditProfileBook extends JFrame {
 
     // Method to save the profile book
     private void saveProfileBook() {
-        // Update profile book with new values
         profileBook.setTimeSpent(Integer.parseInt(timeSpentField.getText()));
         profileBook.setStartDate(getDateFromPicker(startDatePicker));
         profileBook.setEndDate(getDateFromPicker(endDatePicker));
@@ -178,10 +177,8 @@ public class EditProfileBook extends JFrame {
             
         } catch (InvalidRatingException e) {
             System.out.println("Rating in EditProfileBook is zero");
-            // e.printStackTrace();
-            // profileBook.setRating(0);
-            // TODO: handle exception
         }
+
         profileBook.setReview(reviewField.getText());
         profileBook.setStatus((ProfileBook.Status) statusComboBox.getSelectedItem());
 
@@ -198,17 +195,13 @@ public class EditProfileBook extends JFrame {
             
         } catch (Exception e) {
             e.printStackTrace();
-            // TODO: handle exception
         }
 
         try {
             this.parentFrame.refresh();
             
         } catch (Exception e) {
-            // TODO: handle exception
         }
-
-
 
         dispose();
     }

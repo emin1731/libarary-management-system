@@ -1,4 +1,6 @@
+// This class represents a component to change the locale of the application, allowing users to select between English and Azerbaijani languages.
 package GUI;
+
 import javax.security.auth.Refreshable;
 import javax.swing.*;
 import java.awt.*;
@@ -6,13 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 
-
 public class LocaleChanger extends JComponent {
     private static Locale currentLocale = Locale.getDefault();
     private JComboBox<String> languageDropdown;
     private Refreshable parentFrame;
 
-    @SuppressWarnings("deprecation")
     public LocaleChanger(Refreshable parentFrame) {
         this.parentFrame = parentFrame;
         // Dropdown to select language
@@ -50,7 +50,6 @@ public class LocaleChanger extends JComponent {
             parentFrame.refresh();
         } catch (Exception e) {
             e.printStackTrace();
-            // System.err.println("Error while refreshing in LocaleChanger");
         }
     }
 

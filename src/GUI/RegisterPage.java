@@ -1,3 +1,4 @@
+// RegisterPage class represents a graphical user interface for user registration, allowing new users to create accounts by providing a username and password, with localization support.
 package GUI;
 
 import java.awt.*;
@@ -11,7 +12,6 @@ import database.AccountDB;
 import database.PersonalDB;
 import exceptions.EmptyUsernameOrPasswordException;
 import exceptions.UserAlreadyExistsException;
-import exceptions.UserNotFoundException;
 
 public class RegisterPage implements ActionListener, Refreshable {
 	JFrame frame = new JFrame("Register");
@@ -25,7 +25,6 @@ public class RegisterPage implements ActionListener, Refreshable {
 	JLabel registerLabel = new JLabel("Register");
 	JLabel welcomeLabel = new JLabel("Welcome!");
 	AccountDB account;
-	// HashMap<String,String> accounts = this.getLoginData("src/data/Accounts.csv");
 
 	public RegisterPage() {
 		account = new AccountDB("src/data/Accounts.csv");
@@ -33,18 +32,15 @@ public class RegisterPage implements ActionListener, Refreshable {
 		frame.setSize(700, 525);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// Create a LocaleChanger component
+
         LocaleChanger localeChanger = new LocaleChanger(this);
 
-		// Create a panel for the tabbed pane and locale changer
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BorderLayout());
 
-        // Add the LocaleChanger to a panel with FlowLayout
-        JPanel localePanel = new JPanel(new FlowLayout(FlowLayout.LEADING)); // Align components to the left
+        JPanel localePanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         localePanel.add(localeChanger);
 
-        // Add the localePanel and tabbed pane to the content panel
         contentPanel.add(localePanel, BorderLayout.NORTH);
 
 		JPanel panel = new JPanel();
@@ -111,18 +107,14 @@ public class RegisterPage implements ActionListener, Refreshable {
     public void refresh() {
 		ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
 
-
-
 		frame.setTitle(bundle.getString("registerPage.register"));
 		loginButton.setText(bundle.getString("registerPage.login"));
 		registerButton.setText(bundle.getString("registerPage.register"));
 		userIDLabel.setText(bundle.getString("registerPage.username"));
 		userPasswordLabel.setText(bundle.getString("registerPage.password"));
-		// messageLabel.setText(bundle.getString(""));
 		registerLabel.setText(bundle.getString("registerPage.register"));
 		welcomeLabel.setText(bundle.getString("registerPage.welcome"));
     }
-
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -140,7 +132,6 @@ public class RegisterPage implements ActionListener, Refreshable {
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						// Turn off metal's use of bold fonts
 						UIManager.put("swing.boldMetal", Boolean.FALSE);
 						new UserPage(userID).setVisible(true);
 					}
@@ -165,7 +156,6 @@ public class RegisterPage implements ActionListener, Refreshable {
 		}
 
 		if(e.getSource()==loginButton) {
-			// System.out.println("LOG");
 			new LoginPage();
 			frame.dispose();
 		}
@@ -176,8 +166,7 @@ public class RegisterPage implements ActionListener, Refreshable {
 
 	@Override
 	public boolean isCurrent() {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'isCurrent'");
 	}
 
-}
+}  

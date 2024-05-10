@@ -1,11 +1,8 @@
+// RoundedButton class extends JButton to create round buttons with custom painting, providing a visually appealing user interface element.
 package GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.geom.RoundRectangle2D;
 
 public class RoundedButton extends JButton {
@@ -17,7 +14,6 @@ public class RoundedButton extends JButton {
         setBorderPainted(false); 
     }
 
-    // Override the paintComponent method to customize the button's appearance
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();

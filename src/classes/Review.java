@@ -1,3 +1,4 @@
+// Represents a review with attributes including rating, reviewer name, and comment.
 package classes;
 
 import java.io.Serializable;

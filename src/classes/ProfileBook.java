@@ -1,21 +1,17 @@
+// Represents a profiled version of a book with extended attributes like status, time spent, and ratings.
 package classes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
-
 import exceptions.InvalidRatingException;
 
-
-
-public class ProfileBook extends Book{
-    public enum Status{
+public class ProfileBook extends Book {
+    public enum Status {
         NOT_STARTED,
         ONGOING,
         COMPLETED
-      }
+    }
 
-      
     private Status status;
     private Integer timeSpent;
     private LocalDate startDate;
@@ -32,6 +28,7 @@ public class ProfileBook extends Book{
         this.rating = rating;
         this.review = review;
     }
+
     public ProfileBook(Book book) {
         super(book.id, book.title, book.author, book.ratings, book.reviews);
         this.status = Status.NOT_STARTED;
@@ -53,7 +50,6 @@ public class ProfileBook extends Book{
         this.review = review;
     }
 
-    // Clone method for deep copy
     public ProfileBook clone() {
         ArrayList<Integer> ratingsCopy = new ArrayList<>(ratings);
         ArrayList<Review> reviewsCopy = new ArrayList<>(reviews);
@@ -61,7 +57,7 @@ public class ProfileBook extends Book{
         LocalDate endDateCopy = endDate != null ? LocalDate.of(endDate.getYear(), endDate.getMonthValue(), endDate.getDayOfMonth()) : null;
 
         return new ProfileBook(this.id, title, author, ratingsCopy, reviewsCopy,status, timeSpent, startDateCopy, endDateCopy, rating, review);
-}
+    }
 
     @Override
     public String toString() {
@@ -86,11 +82,10 @@ public class ProfileBook extends Book{
         this.endDate = endDate;
     }
 
-    public void setRating(Integer rating) throws InvalidRatingException{
+    public void setRating(Integer rating) throws InvalidRatingException {
         if (rating >= 0 && rating <= 5) {
             this.rating = rating;
-        }
-        else {
+        } else {
             throw new InvalidRatingException("Error in class: " + this.getClass() + ", Rating should be from 0 to 5");
         }
     }
@@ -122,5 +117,4 @@ public class ProfileBook extends Book{
     public String getReview() {
         return review;
     }
-    
 }

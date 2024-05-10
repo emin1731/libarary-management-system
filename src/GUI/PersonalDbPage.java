@@ -1,3 +1,4 @@
+// PersonalDbPage class represents a graphical user interface for managing personal book records, allowing users to view, edit, and delete their reading progress and reviews.
 package GUI;
 
 import javax.security.auth.RefreshFailedException;
@@ -14,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 
 import classes.Book;
 import classes.ProfileBook;
-import classes.ProfileBook.Status;
 import database.GeneralDB;
 import database.PersonalDB;
 import utils.TableCellListener;
@@ -38,7 +38,6 @@ public class PersonalDbPage extends JPanel {
     private JTable table;
     private DefaultTableModel model;
     private Refreshable parentFrame;
-    // private String[] columns = {"Title", "Author", "Ratings", "Reviews", "Status", "Time Spent", "Start Date", "End Date", "User Rating", "User Review"};
     private String[] columns = {
         bundle.getString("profilePage.title"), 
         bundle.getString("profilePage.author"), 
@@ -125,9 +124,6 @@ public class PersonalDbPage extends JPanel {
             }
         });
         
-        // Utility method to check if a string is numeric
-        
-
         new TableCellListener(table, 9, (row, newValue) -> {
                 System.out.println(users.get(row).toString());
             
@@ -138,7 +134,6 @@ public class PersonalDbPage extends JPanel {
                     
                 } catch (Exception e) {
                     e.printStackTrace();
-                    // TODO: handle exception
                 }
         });
 
@@ -328,22 +323,13 @@ public class PersonalDbPage extends JPanel {
 
     static class ButtonCellRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
         private JButton button;
-        private Object[][] data;
         private int row;
-        private ArrayList<ProfileBook> profileBooks;
-        private String username;
-        private Refreshable parentFrame;
-
         @Override
         public boolean shouldSelectCell(EventObject anEvent) {
             return true; // Allow cell selection for button interaction
         }
 
         public ButtonCellRendererEditor(ArrayList<ProfileBook> profileBooks, String username, Refreshable parentFrame, Boolean isAdmin) {
-            this.profileBooks = profileBooks;
-            this.username = username;
-            this.parentFrame = parentFrame;
-
             button = new JButton();
             button.setOpaque(true);
             button.addActionListener(new ActionListener() {

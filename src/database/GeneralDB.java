@@ -1,13 +1,12 @@
+// GeneralDB manages the storage and retrieval of book information to and from a CSV file, including functions for initial database creation, reading, writing, updating, and deleting book entries.
 package database;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -16,86 +15,81 @@ import classes.Book;
 import classes.Review;
 import utils.SerializationUtils;
 
-
 public class GeneralDB {
-  private String filename;
+    private String filename;
 
     public GeneralDB(String filename) {
-      this.filename = filename;
+        this.filename = filename;
     }
 
-    public static void main(String[] args) {
-      // initialCreation("data/brodsky.csv", "data/GeneralDatabase.csv");
-    }
     public void initialCreation(String source) {
-      ArrayList<Book> init = new ArrayList<>();
+        ArrayList<Book> init = new ArrayList<>();
 
-      try (BufferedReader reader = new BufferedReader(new FileReader(source))) {
-        reader.readLine(); // Skip header line
-        String line;
-        String title = "NOT_INIT";
-        String author;
-        while ((line = reader.readLine()) != null) {
-          String[] data = line.split(",");
+        try (BufferedReader reader = new BufferedReader(new FileReader(source))) {
+            reader.readLine(); // Skip header line
+            String line;
+            String title = "NOT_INIT";
+            String author;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
 
-          author = data[data.length - 1].trim();
-          if (data.length <= 1 || data[data.length - 1].trim() == "") {
-            author = "Unknown";  
-          }
+                author = data[data.length - 1].trim();
+                if (data.length <= 1 || data[data.length - 1].trim() == "") {
+                    author = "Unknown";
+                }
 
-          if (data.length == 1) {
-            title = data[0];
-            init.add(new Book(UUID.randomUUID().toString(), title, author, new ArrayList<Integer>(), new ArrayList<Review>()));
-          }
-          else {
-            for (int i = 0; i < data.length - 1; i++) {
-              String[] titles = data[i].split("\\s*,\\s*");
-                for (String titleItem : titles) {
-                  titleItem = titleItem.trim().replaceAll("^\"|\"$|['\"]", "");
-                  if (titleItem == "") {
-                    titleItem = "Unknown";
-                  }
-                  ArrayList<String> rowData = new ArrayList<>();
-                  rowData.add(titleItem.trim());
-                  title = titleItem.trim();
-                  rowData.add(author);
-                  init.add(new Book(UUID.randomUUID().toString(), title, author, new ArrayList<Integer>(), new ArrayList<Review>()));
-              }
+                if (data.length == 1) {
+                    title = data[0];
+                    init.add(new Book(UUID.randomUUID().toString(), title, author, new ArrayList<Integer>(), new ArrayList<Review>()));
+                } else {
+                    for (int i = 0; i < data.length - 1; i++) {
+                        String[] titles = data[i].split("\\s*,\\s*");
+                        for (String titleItem : titles) {
+                            titleItem = titleItem.trim().replaceAll("^\"|\"$|['\"]", "");
+                            if (titleItem == "") {
+                                titleItem = "Unknown";
+                            }
+                            ArrayList<String> rowData = new ArrayList<>();
+                            rowData.add(titleItem.trim());
+                            title = titleItem.trim();
+                            rowData.add(author);
+                            init.add(new Book(UUID.randomUUID().toString(), title, author, new ArrayList<Integer>(), new ArrayList<Review>()));
+                        }
+                    }
+                }
             }
-          }
+        } catch (IOException e) {
+            System.err.println("Error reading CSV file: " + e.getMessage());
         }
-      } catch (IOException e) {
-        System.err.println("Error reading CSV file: " + e.getMessage());
-      }
 
-      for (Book book : init) {
-        writeBookToCSV(book);
-      }
-    } 
-    
+        for (Book book : init) {
+            writeBookToCSV(book);
+        }
+    }
+
     public ArrayList<Book> readBooksFromCSV() {
-      ArrayList<Book> books = new ArrayList<>();
-    
-      try (BufferedReader reader = new BufferedReader(new FileReader(this.filename))) {
-        reader.readLine(); // Skip header line
-        String line;
-        while ((line = reader.readLine()) != null) {
-          String[] data = line.split(",");
-          String id = data[0];
-          String title = data[1];
-          String author = data[2];
-          ArrayList<Integer> ratings = SerializationUtils.deserializeArrayListFromString(data[3]);
+        ArrayList<Book> books = new ArrayList<>();
 
-          ArrayList<Review> reviews = SerializationUtils.deserializeArrayListFromString(data[4]);
-    
-          Book book = new Book(id, title, author, ratings, reviews);
-          books.add(book);
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.filename))) {
+            reader.readLine(); // Skip header line
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                String id = data[0];
+                String title = data[1];
+                String author = data[2];
+                ArrayList<Integer> ratings = SerializationUtils.deserializeArrayListFromString(data[3]);
+
+                ArrayList<Review> reviews = SerializationUtils.deserializeArrayListFromString(data[4]);
+
+                Book book = new Book(id, title, author, ratings, reviews);
+                books.add(book);
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading CSV file: " + e.getMessage());
         }
-      } catch (IOException e) {
-        System.err.println("Error reading CSV file: " + e.getMessage());
-      }
-    
-      return books;
+
+        return books;
     }
 
     public void writeBookToCSV(Book book) {
@@ -105,7 +99,7 @@ public class GeneralDB {
             if (new File(this.filename).length() == 0) {
                 writer.write("Id,Title,Author,Ratings,Reviews\n");
             }
-    
+
             StringBuilder csvLine = new StringBuilder();
             csvLine.append(book.getId()).append(",");
             csvLine.append(book.getTitle()).append(",");
@@ -119,75 +113,66 @@ public class GeneralDB {
             System.err.println("Error writing to CSV file: " + e.getMessage());
         }
     }
-    
-    
 
     public void updateBook(Book updatedBook) throws IOException {
         ArrayList<Book> books = readBooksFromCSV();
-      
+
         int index = -1;
         for (int i = 0; i < books.size(); i++) {
-          if (books.get(i).getId().equals(updatedBook.getId())) {
-            index = i;
-            break;
-          }
+            if (books.get(i).getId().equals(updatedBook.getId())) {
+                index = i;
+                break;
+            }
         }
-      
+
         if (index != -1) {
-          books.set(index, updatedBook); // Update the book object in the list
+            books.set(index, updatedBook); // Update the book object in the list
         } else {
-          // Handle case where book to update is not found (optional)
-          System.err.println("Book was not found: " + updatedBook.getClass());
+            // Handle case where book to update is not found (optional)
+            System.err.println("Book was not found: " + updatedBook.getClass());
         }
         try (FileOutputStream outputStream = new FileOutputStream(this.filename);
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-        writer.write("Id,Title,Author,Ratings,Reviews\n");
-        for (Book book : books) {
-          writeBookToCSV(book); // Assuming writeBookToCSV handles writing a book object to a line
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+            writer.write("Id,Title,Author,Ratings,Reviews\n");
+            for (Book book : books) {
+                writeBookToCSV(book); // Assuming writeBookToCSV handles writing a book object to a line
+            }
+            writer.flush();
         }
-        writer.flush();
-        }
-      }
+    }
 
-      public void deleteBook(String bookId) throws IOException {
+    public void deleteBook(String bookId) throws IOException {
         ArrayList<Book> books = readBooksFromCSV();
         ArrayList<Book> newBooks = new ArrayList<>();
-      
+
         for (Book book : books) {
-          System.out.println(book.toString());
-          if (!book.getId().equals(bookId)) {
-            newBooks.add(book);
-          }
-          else {
-            System.out.println("FOUND -- " + book.toString());
-          }
+            System.out.println(book.toString());
+            if (!book.getId().equals(bookId)) {
+                newBooks.add(book);
+            } else {
+                System.out.println("FOUND -- " + book.toString());
+            }
         }
         // Rewrite the CSV file excluding the deleted book
         try (FileOutputStream outputStream = new FileOutputStream(this.filename);
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-        writer.write("Id,Title,Author,Ratings,Reviews\n");
-        for (Book book : newBooks) {
-          writeBookToCSV(book); // Assuming writeBookToCSV handles writing a book object to a line
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+            writer.write("Id,Title,Author,Ratings,Reviews\n");
+            for (Book book : newBooks) {
+                writeBookToCSV(book); // Assuming writeBookToCSV handles writing a book object to a line
+            }
+            writer.flush();
         }
-        writer.flush();
-        }
-      }
+    }
 
-      public Book getBookById(String bookId) throws IOException {
+    public Book getBookById(String bookId) throws IOException {
         ArrayList<Book> books = readBooksFromCSV();
-    
+
         for (Book book : books) {
             if (book.getId().equals(bookId)) {
                 return book;
             }
         }
-    
+
         return null; // Indicate book not found
     }
-
-      
-      
 }
-    
-
-
