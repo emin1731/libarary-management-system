@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -42,15 +43,18 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         bundle.getString("generalDb.reviews"), 
         bundle.getString("generalDb.actions")
     }; // Updated columns
-    private Object[][] data;
     private int sortColumn = -1;
     private boolean ascending = true;
-    private int clickCount = 0;
-    private JTextField searchField;
     private String username;
     private Refreshable parentFrame;
+    private Object[][] data;
+    private TableRowSorter<DefaultTableModel> sorter;
+    private JTextField searchField;
     private JButton searchButton;
+    private int sortCount = 0;
+
     private Boolean isAdmin;
+    
 
 
     public GeneralDbPage(Refreshable parentFrame, String username, Boolean isAdmin) {
@@ -201,29 +205,33 @@ public class GeneralDbPage extends JPanel implements ActionListener {
         table.getTableHeader().setForeground(tableHeaderForeground);
         table.getTableHeader().setBackground(tableHeaderBackground);
 
-        table.getTableHeader().addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                int col = table.columnAtPoint(evt.getPoint());
-                if (col == sortColumn) {
-                    if (clickCount == 0) {
+        table.getTableHeader().addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int column = table.columnAtPoint(e.getPoint());
+                sortCount++;
+                switch (sortCount % 3) {
+                    case 0: // keeps original order
+                        sorter = null;
+                        table.setRowSorter(null);
+                        break;
+                    case 1: // ascending order
+                        sorter = new TableRowSorter<>(model);
+                        table.setRowSorter(sorter);
+                        sorter.toggleSortOrder(column);
                         ascending = true;
-                        clickCount = 1;
-                    } else if (clickCount == 1) {
+                        break;
+                    case 2: // descending order
+                        sorter = new TableRowSorter<>(model);
+                        table.setRowSorter(sorter);
+                        sorter.toggleSortOrder(column);
+                        sorter.toggleSortOrder(column);
                         ascending = false;
-                        clickCount = 2;
-                    } else {
-                        sortColumn = -1;
-                        ascending = true;
-                        clickCount = 0;
-                    }
-                } else {
-                    sortColumn = col;
-                    ascending = true;
-                    clickCount = 1;
+                        break;
                 }
-                sortTable();
+                System.out.println(ascending);
             }
         });
+
 
         setSize(700, 400);
     }
@@ -424,5 +432,3 @@ class ClickableCellRenderer extends DefaultTableCellRenderer {
         return this;
     }
 }
-
-
