@@ -44,10 +44,10 @@ public class RegisterPage implements ActionListener, Refreshable {
         contentPanel.add(localePanel, BorderLayout.NORTH);
 
 		JPanel panel = new JPanel();
-		registerLabel.setBounds(470, 50, 200, 35); 
-        registerLabel.setFont(new Font("Arial", Font.BOLD, 35)); 
+		registerLabel.setBounds(400, 50, 300, 40); 
+        registerLabel.setFont(new Font("Arial", Font.BOLD, 30)); 
 		welcomeLabel.setBounds(100,50,250,35); 
-		welcomeLabel.setFont(new Font("Georgia", Font.BOLD, 35));
+		welcomeLabel.setFont(new Font("Times New Roman", Font.BOLD, 35));
         panel.add(registerLabel);
 		panel.add(welcomeLabel);
 

@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -58,6 +59,8 @@ public class PersonalDbPage extends JPanel {
     private int clickCount = 0;
     private String username;
     private Boolean isAdmin;
+    private int sortCount = 0;
+    private TableRowSorter<DefaultTableModel> sorter;
 
     public PersonalDbPage(Refreshable parentFrame, String username, Boolean isAdmin) {
         super(new BorderLayout());
@@ -208,6 +211,32 @@ public class PersonalDbPage extends JPanel {
                     clickCount = 1;
                 }
                 sortTable();
+            }
+        });
+        table.getTableHeader().addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int column = table.columnAtPoint(e.getPoint());
+                sortCount++;
+                switch (sortCount % 3) {
+                    case 0: // keeps original order
+                        sorter = null;
+                        table.setRowSorter(null);
+                        break;
+                    case 1: // ascending order
+                        sorter = new TableRowSorter<>(model);
+                        table.setRowSorter(sorter);
+                        sorter.toggleSortOrder(column);
+                        ascending = true;
+                        break;
+                    case 2: // descending order
+                        sorter = new TableRowSorter<>(model);
+                        table.setRowSorter(sorter);
+                        sorter.toggleSortOrder(column);
+                        sorter.toggleSortOrder(column);
+                        ascending = false;
+                        break;
+                }
+                System.out.println(ascending);
             }
         });
 
