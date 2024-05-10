@@ -262,9 +262,9 @@ public class GeneralDbPage extends JPanel implements ActionListener {
             Book book = books.get(i);
             result[i][0] = book.getTitle();
             result[i][1] = book.getAuthor();
-            result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : "No ratings";
+            result[i][2] = (book.getAverageRating() != -1) ? book.getAverageRating() : bundle.getString("generalDb.noRatings");
             result[i][3] = book.getReviewsUsersString();
-            result[i][4] = this.isAdmin ? "Delete" : "Add to Favoruite";
+            result[i][4] = this.isAdmin ? bundle.getString("generalDb.delete") : bundle.getString("generalDb.addToFavoruite");
         }
         return result;
     }

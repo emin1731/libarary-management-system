@@ -22,16 +22,20 @@ public class Book implements Serializable, Cloneable{
         this.ratings = ratings;
         this.reviews = reviews;
     }
+
     public double getAverageRating() {
-        if (this.ratings.isEmpty()) {
+        double sum = 0;
+
+        for (Review rating : reviews) {
+            sum += rating.getRating();
+        }
+
+        if (sum == 0) {
             return -1.0;
         }
-        double sum = 0;
-        for (Integer integer : this.ratings) {
-            sum += integer;
-        }
-        return (Double) sum / this.ratings.size();
+        return (Double) sum / this.reviews.size();
     }
+    
 
     public String getReviewsUsersString() {
         if (reviews.isEmpty()) {
@@ -51,10 +55,6 @@ public class Book implements Serializable, Cloneable{
         }
         return res.trim(); // Remove trailing space if any
     }
-
-    
-
-    
 
 
     @Override
