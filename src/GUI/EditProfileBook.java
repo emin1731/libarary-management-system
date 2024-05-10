@@ -9,6 +9,8 @@ import classes.ProfileBook;
 import classes.Review;
 import database.GeneralDB;
 import database.PersonalDB;
+import exceptions.InvalidRatingException;
+
 import java.awt.*;
 import java.time.LocalDate;
 import java.awt.event.*;
@@ -171,10 +173,13 @@ public class EditProfileBook extends JFrame {
         profileBook.setStartDate(getDateFromPicker(startDatePicker));
         profileBook.setEndDate(getDateFromPicker(endDatePicker));
         try {
+
             profileBook.setRating(Integer.parseInt(ratingField.getText()));
             
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (InvalidRatingException e) {
+            System.out.println("Rating in EditProfileBook is zero");
+            // e.printStackTrace();
+            // profileBook.setRating(0);
             // TODO: handle exception
         }
         profileBook.setReview(reviewField.getText());

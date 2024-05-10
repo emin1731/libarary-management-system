@@ -17,6 +17,7 @@ import classes.ProfileBook;
 import classes.ProfileBook.Status;
 import database.GeneralDB;
 import database.PersonalDB;
+import utils.TableCellListener;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -69,7 +70,77 @@ public class PersonalDbPage extends JPanel {
         data = toObjectArray(users);
 
         model = new DefaultTableModel(data, columns);
-        table = new JTable(model);
+        table = new JTable(model) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (!isAdmin) {
+                    return column == 9 || column == 8 || column == 5;
+                }
+                else {
+                    return isAdmin;
+                }
+            }
+
+        };
+
+        new TableCellListener(table, 5, (row, newValue) -> {
+            if (isNumeric(newValue)) {
+                System.out.println(users.get(row).toString());
+        
+                ProfileBook newBook = users.get(row).clone();
+                try {
+                    newBook.setTimeSpent(Integer.parseInt(newValue));
+        
+                    PersonalDB.updateBook("src/data/users/" + username + ".csv", newBook);
+        
+                } catch (Exception e) {
+                    // Handle exception updating rating (e.g., invalid data)
+                    System.err.println("Error updating rating: " + e.getMessage());
+                }
+            } else {
+                this.reloadPage();
+                // Handle non-numeric input (e.g., show error message)
+                System.err.println("Please enter a valid numeric rating.");
+            }
+        });
+
+        new TableCellListener(table, 8, (row, newValue) -> {
+            if (isNumeric(newValue)) {
+                System.out.println(users.get(row).toString());
+        
+                ProfileBook newBook = users.get(row).clone();
+                try {
+                    newBook.setRating(Integer.parseInt(newValue));
+        
+                    PersonalDB.updateBook("src/data/users/" + username + ".csv", newBook);
+        
+                } catch (Exception e) {
+                    // Handle exception updating rating (e.g., invalid data)
+                    System.err.println("Error updating rating: " + e.getMessage());
+                }
+            } else {
+                this.reloadPage();
+                // Handle non-numeric input (e.g., show error message)
+                System.err.println("Please enter a valid numeric rating.");
+            }
+        });
+        
+        // Utility method to check if a string is numeric
+        
+
+        new TableCellListener(table, 9, (row, newValue) -> {
+                System.out.println(users.get(row).toString());
+            
+                ProfileBook newBook = users.get(row).clone();
+                newBook.setReview(newValue);
+                try {
+                    PersonalDB.updateBook("src/data/users/" + username +".csv", newBook);
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // TODO: handle exception
+                }
+        });
 
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
@@ -152,22 +223,15 @@ public class PersonalDbPage extends JPanel {
         table.getColumn(bundle.getString("profilePage.action")).setCellEditor(new ButtonCellRendererEditor(users, username, parentFrame, this.isAdmin));
 
 
-        // // Create a button
-        // JButton button = new JButton("Click me");
-        // button.addActionListener(e -> {
-        //     // Handle button click event here
-        // });
-
-        // // Customizing button colors
-        // button.setBackground(Color.BLUE); 
-        // button.setForeground(Color.WHITE);
-        // button.setFocusPainted(false); 
-        // button.setFont(new Font("Arial", Font.BOLD, 14));
-
-        // // Add the button to the panel at the bottom right
-        // add(button, BorderLayout.SOUTH);
-
         setSize(700, 400);
+    }
+    public static Boolean isNumeric(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public void reloadPage() {
