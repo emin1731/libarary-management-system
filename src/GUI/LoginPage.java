@@ -28,6 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 import database.AccountDB;
+import exceptions.EmptyUsernameOrPasswordException;
 import exceptions.UserNotFoundException;
 
 public class LoginPage implements ActionListener, ItemListener, Refreshable {
@@ -181,9 +182,12 @@ public class LoginPage implements ActionListener, ItemListener, Refreshable {
 					messageLabel.setForeground(Color.red);
 					messageLabel.setText(bundle.getString("loginPage.wrongPassword"));
 				}
-			} catch (UserNotFoundException er) {
+			} catch (UserNotFoundException e1) {
 				messageLabel.setForeground(Color.red);
 				messageLabel.setText(bundle.getString("loginPage.usernameNotFound"));
+			} catch (EmptyUsernameOrPasswordException e2) {
+				messageLabel.setForeground(Color.red);
+				messageLabel.setText(bundle.getString("loginPage.emptyUsernameOrPassword"));
 			}
 			
 		}

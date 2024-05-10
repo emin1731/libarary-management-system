@@ -9,6 +9,8 @@ import javax.swing.*;
 
 import database.AccountDB;
 import database.PersonalDB;
+import exceptions.EmptyUsernameOrPasswordException;
+import exceptions.UserAlreadyExistsException;
 import exceptions.UserNotFoundException;
 
 public class RegisterPage implements ActionListener, Refreshable {
@@ -57,7 +59,7 @@ public class RegisterPage implements ActionListener, Refreshable {
 		panel.add(userIDLabel);
 
 
-		messageLabel.setBounds(400, 247, 200, 25);
+		messageLabel.setBounds(400, 247, 250, 25);
 		messageLabel.setFont(new Font(null,Font.ITALIC, 14));
 		panel.add(messageLabel);
 
@@ -124,7 +126,7 @@ public class RegisterPage implements ActionListener, Refreshable {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		ResourceBundle bundle = ResourceBundle.getBundle("Messages", LocaleChanger.getCurrentLocale());
 
 		if(e.getSource()==registerButton) {
 			System.out.println("REG");
@@ -132,13 +134,8 @@ public class RegisterPage implements ActionListener, Refreshable {
 			String password = String.valueOf(userPasswordField.getPassword());
 
 			try {
-				if (account.loginUser(userID, password)) {
-					System.out.println("HELLO");
-				}
-				
-			} 
-			catch (UserNotFoundException er) {
 				account.registerUser(userID, password);
+
 				PersonalDB.createNewPersonalDB("src/data/users/" + userID + ".csv");
 
 				SwingUtilities.invokeLater(new Runnable() {
@@ -155,8 +152,16 @@ public class RegisterPage implements ActionListener, Refreshable {
 
 				new UserPage(userID);
 				frame.dispose();
+
+			} catch (UserAlreadyExistsException e1) {
+				messageLabel.setForeground(Color.red);
+				messageLabel.setText("Registered");
+				messageLabel.setText(bundle.getString("registerPage.userAlreadyExists"));
+			} catch (EmptyUsernameOrPasswordException e2) {
+				messageLabel.setForeground(Color.red);
+				messageLabel.setText(bundle.getString("loginPage.emptyUsernameOrPassword"));
 			}
-			
+
 		}
 
 		if(e.getSource()==loginButton) {
