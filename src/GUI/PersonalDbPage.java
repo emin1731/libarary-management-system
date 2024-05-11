@@ -76,7 +76,7 @@ public class PersonalDbPage extends JPanel {
             @Override
             public boolean isCellEditable(int row, int column) {
                 if (!isAdmin) {
-                    return column == 9 || column == 8 || column == 5;
+                    return column == 9 || column == 8 || column == 5 || column == 10;
                 }
                 else {
                     return isAdmin;
